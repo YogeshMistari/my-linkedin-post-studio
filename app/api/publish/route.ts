@@ -5,28 +5,11 @@ import {
   publishX,
   type PublishResult,
 } from "@/lib/publishers";
+import { formatSocialText } from "@/lib/social-format";
 
 export const runtime = "nodejs";
 
 type PublishTarget = "linkedin" | "x" | "both";
-
-function sanitizePublishText(text: string, platform: "linkedin" | "x") {
-  let result = text
-    .replace(/\r\n/g, "\n")
-    .replace(/__/g, "")
-    .replace(/\x60/g, "")
-    .replace(/^#{1,6}\s+/gm, "")
-    .replace(/^\s*-\s+/gm, "• ")
-    .replace(/\n{3,}/g, "\n\n");
-
-  if (platform === "linkedin") {
-    result = result.replace(/\*{2,}/g, "*");
-  } else {
-    result = result.replace(/\*+/g, "");
-  }
-
-  return result.trim();
-}
 
 export async function GET() {
   return NextResponse.json(getPublishingConfig());
@@ -37,11 +20,11 @@ export async function POST(request: Request) {
     const body = await request.json();
 
     const target = body?.target as PublishTarget;
-    const linkedinText = sanitizePublishText(
+    const linkedinText = formatSocialText(
       String(body?.linkedinText || ""),
       "linkedin"
     );
-    const xText = sanitizePublishText(String(body?.xText || ""), "x");
+    const xText = formatSocialText(String(body?.xText || ""), "x");
     const approvals = body?.approvals || {};
     const imageDataUrl =
       typeof body?.imageDataUrl === "string" && body.imageDataUrl.startsWith("data:image/")
