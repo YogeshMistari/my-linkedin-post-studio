@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getOpenAI } from "@/lib/openai";
 import { generateWithOllama } from "@/lib/ollama";
 import { buildGenerationInstructions } from "@/lib/prompts";
+import { contentPlaybook } from "@/lib/content-playbook";
 import type { ContentGoal, GenerationMode } from "@/lib/types";
 
 const DEFAULT_OPENAI_TEXT_MODEL = "gpt-6-luna";
@@ -13,6 +14,22 @@ function extractJson(text: string) {
     .replace(/```$/i, "");
 
   return JSON.parse(cleaned);
+}
+
+function ensureRequiredHashtags(text: string) {
+  let result = text.trim();
+
+  for (const hashtag of contentPlaybook.requiredHashtags) {
+    const hasHashtag = result
+      .split(/\s+/)
+      .some((token) => token.toLowerCase() === hashtag.toLowerCase());
+
+    if (!hasHashtag) {
+      result = `${result}\n\n${hashtag}`.trim();
+    }
+  }
+
+  return result;
 }
 
 async function generateWithOpenAI({
@@ -95,8 +112,11 @@ export async function POST(request: Request) {
 
     const parsed = extractJson(raw);
 
-    const linkedin = String(parsed.linkedin ?? "").trim();
-    const x = String(parsed.x ?? "").trim();
+    const linkedinRaw = String(parsed.linkedin ?? "").trim();
+    const xRaw = String(parsed.x ?? "").trim();
+
+    const linkedin = linkedinRaw ? ensureRequiredHashtags(linkedinRaw) : "";
+    const x = xRaw ? ensureRequiredHashtags(xRaw) : "";
 
     const missingRequiredDraft =
       (mode === "both" && (!linkedin || !x)) ||

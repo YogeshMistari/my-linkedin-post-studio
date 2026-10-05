@@ -132,6 +132,11 @@ export const creatorConfig = {
     northStar:
       "Build professional trust and authenticity first, then convert that trust into relevant follower growth.",
 
+    requiredHashtags: [
+      "#DataXMentor",
+      "#DataWithAnurag",
+    ],
+
     topicLibrary: [
       {
         id: "de-roadmap",
@@ -331,7 +336,8 @@ export const creatorConfig = {
         "For roadmaps, checklists, mistakes and interview posts, default to point-style formatting.",
         "Keep a normal post around 140-280 words unless the topic genuinely needs more depth.",
         "Use whitespace deliberately.",
-        "Use 0-2 hashtags only when useful.",
+        "Always include the configured required brand hashtags at the end of every post.",
+        "Do not add extra hashtags unless they are highly relevant.",
         "Use emojis only when they genuinely help the format or the user asks for them.",
       ],
       x: [
@@ -342,6 +348,7 @@ export const creatorConfig = {
         "Use a short thread only when the idea genuinely needs it.",
         "No LinkedIn-style motivational conclusion.",
         "Make the post quotable, useful or discussion-worthy without engagement bait.",
+        "Always include the configured required brand hashtags and keep the full post within the platform character limit when possible.",
       ],
     },
 

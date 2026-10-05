@@ -78,6 +78,15 @@ ${contentPlaybook.growthPrinciples.map((item) => `- ${item}`).join("\n")}
 RECURRING CONTENT AREAS
 ${contentPlaybook.recurringThemes.join(", ")}
 
+MANDATORY BRAND HASHTAGS
+${contentPlaybook.requiredHashtags.join(" ")}
+- Include ALL configured brand hashtags in every LinkedIn and X draft.
+- Keep them at the end of the post.
+- Never omit them during regeneration or quick rewrites.
+- Do not change their spelling or capitalization.
+- Avoid extra hashtags unless they are highly relevant.
+- For X, reserve enough characters so these hashtags still fit.
+
 TASK
 ${modeInstruction}
 
