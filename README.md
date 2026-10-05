@@ -1,79 +1,81 @@
-# LinkedIn + X Post Studio
+# Post Studio — LinkedIn + X Creator Growth Copilot
 
-A personal content copilot for generating, reviewing, approving and publishing platform-native posts for LinkedIn and X.
+Post Studio turns a creator's real expertise into platform-native LinkedIn and X drafts, local visuals, review/approval flows, and direct publishing.
 
-## Local AI stack
+The product goal is:
 
-- **Text:** Ollama + `gemma3:4b`
-- **Images:** Draw Things CLI + `flux_2_klein_4b_q8p.ckpt`
-
-## Local AI configuration
-
-```env
-AI_PROVIDER=ollama
-OLLAMA_BASE_URL=http://127.0.0.1:11434
-OLLAMA_MODEL=gemma3:4b
-
-IMAGE_PROVIDER=drawthings
-DRAWTHINGS_BIN=draw-things-cli
-DRAWTHINGS_MODEL=flux_2_klein_4b_q8p.ckpt
-DRAWTHINGS_STEPS=4
+```text
+Authority → Trust → Authenticity → Relevant Follower Growth
 ```
 
-## Real social publishing
+It optimizes for useful hooks, practitioner insight, saves/shares and follow intent without inventing stories or chasing clickbait.
 
-The app now supports three explicit actions:
-
-- **Post LinkedIn**
-- **Post X**
-- **Post Both**
-
-A platform's button only activates after that platform draft is approved. Every publish action asks for final confirmation before making the API request.
-
-### LinkedIn
-
-Add to `.env.local`:
-
-```env
-LINKEDIN_ACCESS_TOKEN=
-LINKEDIN_VERSION=202609
-```
-
-The LinkedIn access token should include `openid`, `profile`, and `w_member_social`. The app calls LinkedIn's OIDC `/v2/userinfo` endpoint and derives the member author automatically, so you do not need to configure a Person URN manually.
-
-### X
-
-Add to `.env.local`:
-
-```env
-X_USER_ACCESS_TOKEN=
-```
-
-This must be a user-context access token authorized to create posts.
-
-### Important
-
-The current direct publishing milestone publishes **text only**.
-
-If you generated or uploaded an image, the app will warn that the image was not attached. Media upload for LinkedIn and X is a separate API flow and is the next publishing milestone.
-
-X drafts over 280 characters are not published yet. Shorten the draft first. Thread publishing will be added separately.
-
-If **Post Both** gets one success and one failure, do not click Post Both again. The app reports the successful platform and you should retry only the failed platform to avoid duplicate posts.
-
-## Start the app
+## Fast start
 
 ```bash
-npm install
+git clone https://github.com/anuanurag2410/linkedin-x-post.git
+cd linkedin-x-post
+bash scripts/setup-local-ai.sh
 npm run dev
 ```
 
 Open `http://localhost:3000`.
 
-## Personalization
+Full installation, models, environment variables and publishing requirements are in **[REQUIREMENTS.md](./REQUIREMENTS.md)**.
 
-- `lib/creator-profile.ts` contains public-safe professional background.
-- `lib/content-playbook.ts` contains recurring viewpoints, content themes and writing habits.
-- `lib/prompts.ts` combines them with each new topic.
+## Personalize the whole app in one file
 
-Keep private client information, compensation, family details and secrets out of the public creator profile.
+Edit:
+
+```text
+config/creator.config.ts
+```
+
+This is the creator DNA file. A different creator can replace the current profile, expertise, proof, opinions, voice and content strategy there without rewriting the prompt engine.
+
+## Default local stack
+
+- **Text:** Ollama + `gemma3:4b`
+- **Images:** Draw Things CLI + `flux_2_klein_4b_q8p.ckpt`
+- **App:** Next.js + React
+
+No paid AI API is required for the default local generation flow.
+
+## Content workflow
+
+1. Enter a topic and optional context.
+2. Choose the content goal:
+   - Trust + Growth
+   - Authority
+   - Engagement
+   - Educational Value
+3. Generate independent LinkedIn and X drafts.
+4. Use quick rewrites for hook, authenticity, authority or save/share value.
+5. Review/edit each platform independently.
+6. Optionally generate a local visual with Draw Things.
+7. Approve LinkedIn and/or X.
+8. Publish LinkedIn, X or both.
+
+## Publishing
+
+The app supports:
+
+- **Post LinkedIn**
+- **Post X**
+- **Post Both**
+
+The current publishing flow is text-first. Media attachment APIs are a separate milestone.
+
+## Important files
+
+```text
+config/creator.config.ts     ← edit this to personalize a creator
+lib/prompts.ts               ← reusable prompt engine
+REQUIREMENTS.md              ← all installation + credential requirements
+scripts/setup-local-ai.sh    ← one-step local AI setup
+.env.example                 ← environment-variable template
+```
+
+## Safety
+
+Only store public-safe professional facts in the creator config. Keep access tokens in `.env.local`, never in source code.

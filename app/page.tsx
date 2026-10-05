@@ -16,9 +16,15 @@ import {
   Upload,
   WandSparkles,
   Send,
+  ShieldCheck,
+  Target,
+  TrendingUp,
+  BrainCircuit,
 } from "lucide-react";
+import { creatorConfig } from "@/config/creator.config";
 import type {
   ApprovalState,
+  ContentGoal,
   GeneratedContent,
   GenerationMode,
   Platform,
@@ -32,16 +38,28 @@ const emptyContent: GeneratedContent = {
 };
 
 const quickFeedback = [
-  "Make it shorter",
-  "Make it more personal",
-  "Make it less AI-sounding",
-  "Give it a stronger hook",
+  "Stronger hook",
+  "More personal",
+  "Build more authority",
+  "More save/share worthy",
+];
+
+const contentGoals: Array<{
+  id: ContentGoal;
+  label: string;
+  hint: string;
+}> = [
+  { id: "trust-growth", label: "Trust + Growth", hint: "Best default" },
+  { id: "authority", label: "Authority", hint: "Expert positioning" },
+  { id: "engagement", label: "Engagement", hint: "Discussion + shares" },
+  { id: "education", label: "Educational", hint: "Saves + value" },
 ];
 
 export default function Home() {
   const [topic, setTopic] = useState("");
   const [notes, setNotes] = useState("");
   const [imageChoice, setImageChoice] = useState<"generate" | "none" | "upload">("generate");
+  const [contentGoal, setContentGoal] = useState<ContentGoal>("trust-growth");
   const [content, setContent] = useState<GeneratedContent>(emptyContent);
   const [approval, setApproval] = useState<ApprovalState>({ linkedin: false, x: false });
   const [loadingMode, setLoadingMode] = useState<GenerationMode | null>(null);
@@ -93,6 +111,7 @@ export default function Home() {
           mode,
           feedback: platformFeedback,
           currentDraft: mode === "both" ? "" : content[mode],
+          contentGoal,
         }),
       });
 
@@ -295,14 +314,16 @@ export default function Home() {
     const overSingleX = !isLinkedIn && chars > 280 && !/^\s*1\//m.test(content.x);
 
     return (
-      <article className="card platform-card">
+      <article className={`card platform-card ${isLinkedIn ? "linkedin-card" : "x-card"}`}>
         <div className="platform-head">
           <div className="platform-name">
-            <span
-              className="platform-dot"
-              style={isLinkedIn ? undefined : { background: "#f5f5f5" }}
-            />
-            {label}
+            <span className={`platform-logo ${isLinkedIn ? "linkedin-logo" : "x-logo"}`}>
+              {isLinkedIn ? "in" : "𝕏"}
+            </span>
+            <span>
+              {label}
+              <small>{isLinkedIn ? "Professional authority" : "Sharp ideas & reach"}</small>
+            </span>
           </div>
           <span className={`platform-meta ${overSingleX ? "warning" : ""}`}>
             {chars.toLocaleString()} characters
@@ -381,18 +402,57 @@ export default function Home() {
     <main className="shell">
       <header className="topbar">
         <div className="brand">
-          <div className="brand-mark">A</div>
+          <div className="brand-mark">
+            <Sparkles size={20} />
+          </div>
           <div>
-            <h1>Post Studio</h1>
-            <p>Anurag&apos;s LinkedIn + X content copilot</p>
+            <span className="brand-eyebrow">Creator Growth Studio</span>
+            <h1>{creatorConfig.app.name}</h1>
+            <p>{creatorConfig.creator.name} · {creatorConfig.creator.positioning.primaryIdentity}</p>
           </div>
         </div>
-        <span className="badge">Nothing posts without your approval</span>
+        <div className="status-cluster">
+          <span className="status-pill local"><span className="status-dot" /> Local AI</span>
+          <span className="status-pill"><BrainCircuit size={13} /> Creator DNA loaded</span>
+        </div>
       </header>
 
+      <section className="hero-panel">
+        <div className="hero-copy">
+          <span className="hero-kicker"><TrendingUp size={14} /> Authority → Trust → Followers</span>
+          <h2>Turn your expertise into content people <span>trust and follow.</span></h2>
+          <p>
+            Every draft is optimized for credibility, useful insight and follower growth
+            without sacrificing authenticity for clickbait.
+          </p>
+        </div>
+        <div className="hero-principles">
+          <div className="principle-card">
+            <ShieldCheck size={20} />
+            <div><strong>Trust first</strong><span>Proof over hype</span></div>
+          </div>
+          <div className="principle-card">
+            <Target size={20} />
+            <div><strong>Right audience</strong><span>Relevant reach</span></div>
+          </div>
+          <div className="principle-card">
+            <TrendingUp size={20} />
+            <div><strong>Growth ready</strong><span>Save & share value</span></div>
+          </div>
+        </div>
+      </section>
+
       <section className="card composer">
-        <label className="section-label" htmlFor="topic">
-          What do you want to post about?
+        <div className="composer-heading">
+          <div className="section-icon"><Sparkles size={18} /></div>
+          <div>
+            <span className="section-label">Create</span>
+            <h3>What do you want to be known for today?</h3>
+          </div>
+        </div>
+
+        <label className="field-label" htmlFor="topic">
+          Topic / idea
         </label>
         <input
           id="topic"
@@ -408,6 +468,26 @@ export default function Home() {
           onChange={(e) => setNotes(e.target.value)}
           placeholder="Optional: your opinion, experience, numbers, source, story, or points that must be included..."
         />
+
+        <div className="goal-section">
+          <div className="field-label-row">
+            <span className="field-label">Content goal</span>
+            <span className="field-help">Changes how the AI frames the post</span>
+          </div>
+          <div className="goal-grid">
+            {contentGoals.map((goal) => (
+              <button
+                key={goal.id}
+                className={`goal-choice ${contentGoal === goal.id ? "active" : ""}`}
+                onClick={() => setContentGoal(goal.id)}
+                type="button"
+              >
+                <strong>{goal.label}</strong>
+                <span>{goal.hint}</span>
+              </button>
+            ))}
+          </div>
+        </div>
 
         <div className="action-row">
           <div className="image-choice">
@@ -520,7 +600,7 @@ export default function Home() {
             <div className="media-actions">
               {imageChoice === "generate" ? (
                 <button
-                  className="secondary"
+                  className="secondary image-generate"
                   onClick={generateImage}
                   disabled={!content.imageConcept.trim() || imageLoading}
                   type="button"

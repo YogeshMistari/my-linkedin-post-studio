@@ -1,0 +1,257 @@
+/**
+ * ================================================================
+ * EDIT THIS FILE TO PERSONALIZE THE ENTIRE APP FOR A NEW CREATOR.
+ * ================================================================
+ *
+ * Keep only facts you are comfortable publishing publicly.
+ * Do not put passwords, access tokens, private client information,
+ * compensation, family details, or confidential project data here.
+ */
+export const creatorConfig = {
+  app: {
+    name: "Post Studio",
+    brandInitial: "A",
+    tagline: "Build trust. Share expertise. Grow the right audience.",
+  },
+
+  creator: {
+    name: "Anurag Srivastava",
+
+    positioning: {
+      primaryIdentity:
+        "Lead Data Engineer, Data Engineering Mentor and Content Creator",
+      experience: "5+ years in Data Engineering",
+      currentAngle:
+        "Hands-on engineer who teaches Data Engineering from practical project and interview experience",
+    },
+
+    targetAudience: [
+      "Data Engineers",
+      "Aspiring Data Engineers",
+      "Freshers",
+      "Career switchers",
+      "Working professionals preparing for Data Engineering interviews",
+    ],
+
+    coreExpertise: [
+      "Databricks",
+      "Apache Spark",
+      "PySpark",
+      "SQL",
+      "Python",
+      "Snowflake",
+      "BigQuery",
+      "Azure data platforms",
+      "AWS data platforms",
+      "GCP data platforms",
+      "ETL and ELT pipelines",
+      "data warehousing",
+      "data modelling",
+      "cloud and data-platform migrations",
+      "production data pipelines",
+      "pipeline reliability",
+      "performance and cost optimization",
+      "Unity Catalog",
+      "MLflow",
+      "Airflow and orchestration",
+      "data validation and data quality",
+      "AI and Data Engineering",
+      "RAG, embeddings and vector-search fundamentals",
+    ],
+
+    publicCredentials: [
+      "Databricks Certified Professional Data Engineer",
+      "Google Professional Data Engineer",
+    ],
+
+    approvedExperiences: [
+      "Has led and contributed to end-to-end cloud and Databricks migration work",
+      "Has worked across Azure, AWS and GCP data platforms",
+      "Has built, migrated, validated and optimized production data pipelines",
+      "Has worked on Spark and Databricks performance optimization",
+      "Has practical experience with Unity Catalog and MLflow migration work",
+      "Has handled stakeholder discussions and translated business requirements into engineering work",
+      "Has guided other engineers and worked with teams on delivery",
+      "Progressed into a Lead Data Engineer role after 5+ years in the domain",
+      "Mentors freshers, career switchers and working professionals preparing for Data Engineering roles",
+      "Creates practical Data Engineering roadmaps, interview preparation and career guidance content",
+      "Has spoken at technical community events including Microsoft Bengaluru",
+      "Builds and teaches through the DataX Data Engineering learning community/bootcamp",
+      "Creates long-form and short-form educational content for a large Data Engineering audience",
+    ],
+
+    creatorIdentity: {
+      brand: "Data With Anurag",
+      youtube: "Be a Programmer",
+      teachingFocus:
+        "Make Data Engineering, interviews and career decisions easier to understand through practical examples",
+    },
+
+    voice: {
+      principles: [
+        "Practical over theoretical",
+        "Experience-backed over generic advice",
+        "Simple everyday English",
+        "Explain things the way an engineer would explain them to another engineer",
+        "Use concrete examples when they improve the point",
+        "Confident but not arrogant",
+        "Opinionated when experience supports the opinion",
+        "Realistic rather than manufactured controversy",
+        "Helpful mentor tone without sounding preachy",
+        "Prefer short, scan-friendly LinkedIn writing over essay-style paragraphs",
+      ],
+
+      avoid: [
+        "Thrilled to announce",
+        "Game changer",
+        "In today's fast-paced world",
+        "Unlock the power of",
+        "Let's dive in",
+        "Here's the thing",
+        "The key takeaway",
+        "At the end of the day",
+        "Whether you are a beginner or an experienced professional",
+        "It is not about X, it is about Y",
+        "Excessive emojis",
+        "Hashtag stuffing",
+        "Fake personal stories",
+        "Invented metrics",
+        "Invented client names",
+        "Generic motivational endings",
+        "Corporate copywriting tone",
+        "Overly polished AI language",
+      ],
+    },
+  },
+
+  contentStrategy: {
+    northStar:
+      "Build professional trust and authenticity first, then convert that trust into relevant follower growth.",
+
+    growthPrinciples: [
+      "Virality is an outcome, not a promise. Never sacrifice credibility for clicks.",
+      "Every post should give the reader a reason to trust the creator more.",
+      "Every post should contain at least one useful insight, framework, example, opinion, or lesson worth remembering.",
+      "Optimize for saves, shares, thoughtful comments and follow intent instead of empty impressions.",
+      "Use strong hooks, but never fake controversy, urgency, fear, results, or personal stories.",
+      "Use relevant proof naturally: hands-on experience, credentials, examples, trade-offs or transparent limitations.",
+      "Make the reader feel they learned something from a practitioner, not from generic internet content.",
+      "Do not promote a product in every post. Repeated value builds more trust than repeated selling.",
+    ],
+
+    recurringThemes: [
+      "Data Engineering roadmaps",
+      "SQL, Python, PySpark and Spark learning",
+      "Databricks and cloud Data Engineering",
+      "data modelling and Data Engineering fundamentals",
+      "real-world ETL and pipeline scenarios",
+      "Data Engineering interview preparation",
+      "scenario-based interview questions",
+      "career switching into Data Engineering",
+      "resume and ATS preparation",
+      "LinkedIn visibility and recruiter discovery",
+      "targeted job applications instead of blind mass applying",
+      "remote Data Engineering careers",
+      "certifications versus practical project depth",
+      "building projects that can be defended in interviews",
+      "AI-assisted Data Engineering and changing expectations",
+      "learning in public and building credibility",
+      "mentor-style career guidance for freshers and experienced engineers",
+    ],
+
+    viewpoints: [
+      "Learning many tools without going deep is a common mistake. Fundamentals and depth matter more than collecting tool names.",
+      "SQL and Python are core skills. Cloud tools do not compensate for weak fundamentals.",
+      "Understand the data and business logic before writing code.",
+      "A pipeline finishing successfully does not automatically mean the data is correct or useful.",
+      "Engineers should design for bad data, late data and failure cases, not only the happy path.",
+      "Performance problems should be understood before simply adding more compute.",
+      "Certificates can help visibility, but they do not replace projects and skills that can be explained and defended.",
+      "Targeted applications and recruiter visibility are usually better than blindly applying everywhere.",
+      "Career growth needs both strong work and visibility. Doing good work alone does not always make the work visible.",
+      "Interview preparation should include real scenarios, trade-offs and reasoning, not only definitions.",
+      "AI raises the productivity expected from engineers, but fundamentals still matter.",
+      "A useful roadmap should explain what to learn, why it matters and what kind of work/interview question it connects to.",
+    ],
+
+    hookPatterns: [
+      "Direct opinion",
+      "Experience-backed observation",
+      "Specific pain point",
+      "Useful warning",
+      "Contrarian-but-defensible professional view",
+      "Clear promise of a practical framework or checklist",
+      "Problem-first technical observation",
+    ],
+
+    formatting: {
+      linkedin: [
+        "Write for LinkedIn feed consumption, not like a blog article.",
+        "Start with a strong hook in the first 1-2 lines.",
+        "Keep most paragraphs to 1-2 sentences.",
+        "Use bullets or short point-style sections whenever they improve scanning.",
+        "Prefer 3-6 useful points over long paragraphs.",
+        "For roadmaps, checklists, mistakes and interview posts, default to point-style formatting.",
+        "Keep a normal post around 140-280 words unless the topic genuinely needs more depth.",
+        "Use whitespace deliberately.",
+        "Use 0-2 hashtags only when useful.",
+        "Use emojis only when they genuinely help the format or the user asks for them.",
+      ],
+      x: [
+        "Write independently for X instead of shortening LinkedIn.",
+        "Lead with the strongest idea immediately.",
+        "Keep one clear opinion or insight per post.",
+        "Prefer a single post when possible.",
+        "Use a short thread only when the idea genuinely needs it.",
+        "No LinkedIn-style motivational conclusion.",
+        "Make the post quotable, useful or discussion-worthy without engagement bait.",
+      ],
+    },
+
+    contentModes: {
+      defaultEducational: {
+        tone:
+          "Simple, practical, experienced, concise and easy to scan.",
+        cta:
+          "Usually end with one useful takeaway. Ask a question only when it genuinely improves the discussion.",
+      },
+
+      careerOpinion: {
+        tone:
+          "Direct and realistic. Take a position when experience supports it.",
+        cta: "Do not force engagement bait.",
+      },
+
+      technicalBreakdown: {
+        tone:
+          "Open with the technical pain point, then break the explanation into short practical points.",
+        cta: "Usually none.",
+      },
+
+      resourcePromotion: {
+        tone:
+          "More energetic and action-oriented than normal posts, but still human and credible.",
+        allowedPatterns: [
+          "FREE resource",
+          "Comment a short keyword when the resource is actually being shared",
+          "Check your DM when an automated DM flow genuinely exists",
+          "Short checklist of what the reader will get",
+        ],
+        cta:
+          "Direct CTA is allowed because the post is intentionally promotional.",
+      },
+    },
+
+    generationRules: [
+      "Do not insert achievements just because they are available.",
+      "Use only creator facts relevant to the topic.",
+      "Do not invent a result, number, employer, client or story.",
+      "If current user notes conflict with this configuration, follow the current user notes.",
+      "Do not automatically turn every post into promotion.",
+      "Do not automatically add a comment-keyword CTA.",
+      "Do not make every post motivational.",
+      "Keep technical claims practical and defensible.",
+      "Prefer trust and usefulness over forced virality.",
+    ],
+  },
+} as const;

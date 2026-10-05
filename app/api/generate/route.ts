@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getOpenAI } from "@/lib/openai";
 import { generateWithOllama } from "@/lib/ollama";
 import { buildGenerationInstructions } from "@/lib/prompts";
-import type { GenerationMode } from "@/lib/types";
+import type { ContentGoal, GenerationMode } from "@/lib/types";
 
 const DEFAULT_OPENAI_TEXT_MODEL = "gpt-6-luna";
 
@@ -44,6 +44,7 @@ export async function POST(request: Request) {
       mode = "both",
       feedback = "",
       currentDraft = "",
+      contentGoal = "trust-growth",
     } = body as {
       topic?: string;
       notes?: string;
@@ -51,6 +52,7 @@ export async function POST(request: Request) {
       mode?: GenerationMode;
       feedback?: string;
       currentDraft?: string;
+      contentGoal?: ContentGoal;
     };
 
     if (!topic?.trim()) {
@@ -63,6 +65,7 @@ export async function POST(request: Request) {
 
     const instructions = buildGenerationInstructions({
       mode,
+      contentGoal,
       feedback,
       currentDraft,
     });
@@ -70,6 +73,7 @@ export async function POST(request: Request) {
     const input = [
       `Topic: ${topic.trim()}`,
       notes ? `Additional notes/context: ${notes.trim()}` : "",
+      `Content goal: ${contentGoal}`,
       `Image preference: ${imageChoice}`,
     ]
       .filter(Boolean)

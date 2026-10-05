@@ -1,0 +1,150 @@
+# Post Studio — Requirements & One-Step Setup
+
+This is the single setup reference for running Post Studio locally.
+
+## What the app uses
+
+| Capability | Default provider | Default model |
+| --- | --- | --- |
+| LinkedIn + X writing | Ollama | `gemma3:4b` |
+| Local image generation | Draw Things CLI | `flux_2_klein_4b_q8p.ckpt` |
+| Web app | Next.js + React | Node.js 22+ |
+| LinkedIn publishing | LinkedIn API | Member OAuth token |
+| X publishing | X API | User OAuth token |
+
+## System requirements
+
+- macOS for the included Draw Things local-image workflow
+- Homebrew
+- Node.js 22 or newer
+- Internet connection for first-time package/model downloads
+- Enough free disk space for local models (allow roughly 10+ GB; model sizes can change)
+
+Apple Silicon is strongly preferred for local image generation.
+
+## One-step local AI setup
+
+From the repository root:
+
+```bash
+bash scripts/setup-local-ai.sh
+```
+
+The script will:
+
+1. Check/install Node 22 when needed.
+2. Install Ollama.
+3. Install Draw Things CLI.
+4. Run `npm install`.
+5. Create `.env.local` from `.env.example` if it does not exist.
+6. Start Ollama and download `gemma3:4b`.
+7. Download the Draw Things image model.
+
+Then run:
+
+```bash
+npm run dev
+```
+
+Open:
+
+```text
+http://localhost:3000
+```
+
+## Check your local AI installation
+
+```bash
+npm run ai:check
+```
+
+## Personalize for another creator
+
+**Edit one file:**
+
+```text
+config/creator.config.ts
+```
+
+That file contains:
+
+- creator name and positioning
+- target audience
+- expertise
+- public credentials
+- approved experience/proof
+- recurring professional opinions
+- content pillars
+- writing voice
+- phrases to avoid
+- LinkedIn/X formatting preferences
+- trust and follower-growth strategy
+
+Do not put secrets or confidential information in that file.
+
+## Environment variables
+
+The local AI defaults are:
+
+```env
+AI_PROVIDER=ollama
+OLLAMA_BASE_URL=http://127.0.0.1:11434
+OLLAMA_MODEL=gemma3:4b
+
+IMAGE_PROVIDER=drawthings
+DRAWTHINGS_BIN=draw-things-cli
+DRAWTHINGS_MODEL=flux_2_klein_4b_q8p.ckpt
+DRAWTHINGS_STEPS=4
+```
+
+### LinkedIn publishing
+
+Optional until you want direct publishing:
+
+```env
+LINKEDIN_ACCESS_TOKEN=
+LINKEDIN_VERSION=202609
+```
+
+The member token should include:
+
+```text
+openid
+profile
+w_member_social
+```
+
+The app resolves the authenticated member with LinkedIn OIDC userinfo.
+
+### X publishing
+
+Optional until you want direct publishing:
+
+```env
+X_USER_ACCESS_TOKEN=
+```
+
+Use a user-context token that can create posts.
+
+## Security
+
+- `.env.local` is ignored by git.
+- Never commit or paste access tokens into source files.
+- Never put confidential client information in `creator.config.ts`.
+- Rotate any token accidentally shown in a screenshot/chat.
+
+## Content-growth philosophy
+
+The system is optimized for:
+
+```text
+professional authority
+        ↓
+trust + authenticity
+        ↓
+saves / shares / useful discussion
+        ↓
+relevant follower growth
+```
+
+No prompt can guarantee virality. The app deliberately prioritizes credible, useful content over clickbait so growth supports the creator's professional reputation.
