@@ -95,17 +95,45 @@ export async function POST(request: Request) {
 
     const parsed = extractJson(raw);
 
+    const linkedin = String(parsed.linkedin ?? "").trim();
+    const x = String(parsed.x ?? "").trim();
+
+    const missingRequiredDraft =
+      (mode === "both" && (!linkedin || !x)) ||
+      (mode === "linkedin" && !linkedin) ||
+      (mode === "x" && !x);
+
+    if (missingRequiredDraft) {
+      console.error("AI returned an incomplete draft payload:", parsed);
+      return NextResponse.json(
+        {
+          error:
+            "The local model returned an empty draft. Please generate again. If this repeats, restart Ollama.",
+        },
+        {
+          status: 502,
+          headers: { "Cache-Control": "no-store" },
+        }
+      );
+    }
+
     const contextUsed = Array.isArray(parsed.contextUsed)
       ? parsed.contextUsed.map(String).slice(0, 8)
       : [];
 
-    return NextResponse.json({
-      linkedin: String(parsed.linkedin ?? ""),
-      x: String(parsed.x ?? ""),
-      imageConcept: String(parsed.imageConcept ?? ""),
-      contextUsed,
-      provider,
-    });
+    return NextResponse.json(
+      {
+        linkedin,
+        x,
+        imageConcept: String(parsed.imageConcept ?? ""),
+        contextUsed,
+        provider,
+        generatedAt: new Date().toISOString(),
+      },
+      {
+        headers: { "Cache-Control": "no-store" },
+      }
+    );
   } catch (error) {
     console.error(error);
 

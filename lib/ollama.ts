@@ -20,6 +20,7 @@ export async function generateWithOllama({
   try {
     const response = await fetch(`${baseUrl}/api/chat`, {
       method: "POST",
+      cache: "no-store",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         model,

@@ -16,6 +16,8 @@ import {
   Upload,
   WandSparkles,
   Send,
+  Lightbulb,
+  Search,
 } from "lucide-react";
 import { creatorConfig } from "@/config/creator.config";
 import type {
@@ -56,6 +58,8 @@ export default function Home() {
   const [notes, setNotes] = useState("");
   const [imageChoice, setImageChoice] = useState<"generate" | "none" | "upload">("generate");
   const [contentGoal, setContentGoal] = useState<ContentGoal>("trust-growth");
+  const [selectedTopicId, setSelectedTopicId] = useState("");
+  const [topicFilter, setTopicFilter] = useState("");
   const [content, setContent] = useState<GeneratedContent>(emptyContent);
   const [approval, setApproval] = useState<ApprovalState>({ linkedin: false, x: false });
   const [loadingMode, setLoadingMode] = useState<GenerationMode | null>(null);
@@ -70,7 +74,28 @@ export default function Home() {
   const [contextOpen, setContextOpen] = useState(false);
   const [publishingTarget, setPublishingTarget] = useState<"linkedin" | "x" | "both" | null>(null);
   const [publishMessage, setPublishMessage] = useState("");
+  const [published, setPublished] = useState<ApprovalState>({
+    linkedin: false,
+    x: false,
+  });
   const uploadRef = useRef<HTMLInputElement>(null);
+  const draftsRef = useRef<HTMLElement | null>(null);
+
+  const topicLibrary = creatorConfig.contentStrategy.topicLibrary;
+  const selectedTopic = useMemo(
+    () => topicLibrary.find((item) => item.id === selectedTopicId),
+    [selectedTopicId, topicLibrary]
+  );
+  const filteredTopics = useMemo(() => {
+    const query = topicFilter.trim().toLowerCase();
+    if (!query) return topicLibrary;
+
+    return topicLibrary.filter(
+      (item) =>
+        item.topic.toLowerCase().includes(query) ||
+        item.category.toLowerCase().includes(query)
+    );
+  }, [topicFilter, topicLibrary]);
 
   const hasDrafts = Boolean(content.linkedin || content.x);
   const linkedinChars = content.linkedin.length;
@@ -84,13 +109,16 @@ export default function Home() {
   async function generate(mode: GenerationMode = "both", presetFeedback = "") {
     setLoadingMode(mode);
     setError("");
+    setPublishMessage("");
 
     if (mode === "both") {
       setApproval({ linkedin: false, x: false });
+      setPublished({ linkedin: false, x: false });
       setImageUrl("");
       setUploadedImageName("");
     } else {
       setApproval((current) => ({ ...current, [mode]: false }));
+      setPublished((current) => ({ ...current, [mode]: false }));
     }
 
     const platformFeedback =
@@ -99,7 +127,11 @@ export default function Home() {
     try {
       const response = await fetch("/api/generate", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "no-cache",
+        },
         body: JSON.stringify({
           topic,
           notes,
@@ -128,6 +160,13 @@ export default function Home() {
       if (mode !== "both") {
         setFeedback((current) => ({ ...current, [mode]: "" }));
       }
+
+      window.setTimeout(() => {
+        draftsRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 50);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Generation failed.");
     } finally {
@@ -135,9 +174,27 @@ export default function Home() {
     }
   }
 
+  function selectTopicIdea(id: string) {
+    const idea = topicLibrary.find((item) => item.id === id);
+    if (!idea) return;
+
+    setSelectedTopicId(id);
+    setTopic(idea.topic);
+    setNotes("");
+    setError("");
+    setPublishMessage("");
+  }
+
+  function selectAngle(angle: string) {
+    setNotes(angle);
+    setError("");
+  }
+
   function updateDraft(platform: Platform, value: string) {
     setContent((current) => ({ ...current, [platform]: value }));
     setApproval((current) => ({ ...current, [platform]: false }));
+    setPublished((current) => ({ ...current, [platform]: false }));
+    setPublishMessage("");
   }
 
   function toggleApproval(platform: Platform) {
@@ -193,6 +250,26 @@ export default function Home() {
     if (choice === "upload") {
       uploadRef.current?.click();
     }
+  }
+
+  function startNewPost() {
+    setTopic("");
+    setNotes("");
+    setSelectedTopicId("");
+    setContent(emptyContent);
+    setApproval({ linkedin: false, x: false });
+    setPublished({ linkedin: false, x: false });
+    setImageUrl("");
+    setUploadedImageName("");
+    setFeedback({ linkedin: "", x: "" });
+    setContextOpen(false);
+    setPublishMessage("");
+    setError("");
+
+    window.setTimeout(() => {
+      document.getElementById("topic")?.focus();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }, 50);
   }
 
   async function publish(target: "linkedin" | "x" | "both") {
@@ -266,6 +343,18 @@ export default function Home() {
 
       if (!response.ok) {
         throw new Error(data.error || "Publishing failed.");
+      }
+
+      const successfulPlatforms = (data.results || [])
+        .filter((item: { success: boolean }) => item.success)
+        .map((item: { platform: Platform }) => item.platform);
+
+      if (successfulPlatforms.length) {
+        setPublished((current) => ({
+          linkedin:
+            current.linkedin || successfulPlatforms.includes("linkedin"),
+          x: current.x || successfulPlatforms.includes("x"),
+        }));
       }
 
       const successes = (data.results || [])
@@ -431,12 +520,51 @@ export default function Home() {
         </p>
       </section>
 
-      <section className="card composer">
+      <section className="create-layout">
+        <aside className="card topic-sidebar">
+          <div className="topic-sidebar-head">
+            <div className="section-icon compact"><Lightbulb size={16} /></div>
+            <div>
+              <span className="section-label">Topic Library</span>
+              <strong>Start from an idea</strong>
+            </div>
+          </div>
+
+          <div className="topic-search">
+            <Search size={14} />
+            <input
+              value={topicFilter}
+              onChange={(e) => setTopicFilter(e.target.value)}
+              placeholder="Filter topics..."
+            />
+          </div>
+
+          <div className="topic-list">
+            {filteredTopics.map((idea) => (
+              <button
+                key={idea.id}
+                className={`topic-item ${selectedTopicId === idea.id ? "active" : ""}`}
+                onClick={() => selectTopicIdea(idea.id)}
+                type="button"
+              >
+                <span>{idea.category}</span>
+                <strong>{idea.topic}</strong>
+              </button>
+            ))}
+          </div>
+
+          <p className="topic-sidebar-help">
+            Pick one or type your own topic. Everything stays editable.
+          </p>
+        </aside>
+
+        <section className="card composer">
         <div className="composer-heading">
           <div className="section-icon"><Sparkles size={18} /></div>
           <div>
             <span className="section-label">Create</span>
             <h3>What do you want to be known for today?</h3>
+            <small className="composer-subtitle">Choose from the library or write your own.</small>
           </div>
         </div>
 
@@ -448,14 +576,39 @@ export default function Home() {
           className="topic-input"
           value={topic}
           onChange={(e) => setTopic(e.target.value)}
-          placeholder="e.g. Why learning every Data Engineering tool is a mistake"
+          placeholder="Choose from the left or write your own topic..."
         />
 
+        {selectedTopic?.angles?.length ? (
+          <div className="angle-section">
+            <div className="field-label-row">
+              <span className="field-label">Optional angle / sub-text</span>
+              <span className="field-help">Pick one, then edit it below</span>
+            </div>
+            <div className="angle-list">
+              {selectedTopic.angles.map((angle) => (
+                <button
+                  key={angle}
+                  className={`angle-choice ${notes === angle ? "active" : ""}`}
+                  onClick={() => selectAngle(angle)}
+                  type="button"
+                >
+                  {angle}
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
+        <label className="field-label notes-label" htmlFor="notes">
+          Your context / notes
+        </label>
         <textarea
+          id="notes"
           className="notes-input"
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
-          placeholder="Optional: your opinion, experience, numbers, source, story, or points that must be included..."
+          placeholder="Optional: choose an angle above, edit it, combine ideas, or write your own context..."
         />
 
         <div className="goal-section">
@@ -516,9 +669,10 @@ export default function Home() {
         </div>
 
         {error ? <p className="error">{error}</p> : null}
+        </section>
       </section>
 
-      <section className="editor-grid">
+      <section ref={draftsRef} className="editor-grid">
         {platformCard("linkedin")}
         {platformCard("x")}
       </section>
@@ -654,35 +808,80 @@ export default function Home() {
 
         <div className="publish-actions">
           <button
-            className={approval.linkedin ? "publish-linkedin" : "publish-disabled"}
-            disabled={!approval.linkedin || Boolean(publishingTarget)}
+            className={
+              approval.linkedin && !published.linkedin
+                ? "publish-linkedin"
+                : "publish-disabled"
+            }
+            disabled={
+              !approval.linkedin ||
+              published.linkedin ||
+              Boolean(publishingTarget)
+            }
             onClick={() => publish("linkedin")}
             type="button"
           >
             <Send size={15} />
-            {publishingTarget === "linkedin" ? "Posting…" : "Post LinkedIn"}
+            {published.linkedin
+              ? "LinkedIn Published"
+              : publishingTarget === "linkedin"
+                ? "Posting…"
+                : "Post LinkedIn"}
           </button>
 
           <button
-            className={approval.x && xChars <= 280 ? "publish-x" : "publish-disabled"}
-            disabled={!approval.x || xChars > 280 || Boolean(publishingTarget)}
+            className={
+              approval.x && xChars <= 280 && !published.x
+                ? "publish-x"
+                : "publish-disabled"
+            }
+            disabled={
+              !approval.x ||
+              published.x ||
+              xChars > 280 ||
+              Boolean(publishingTarget)
+            }
             onClick={() => publish("x")}
             type="button"
             title={xChars > 280 ? "Shorten the X draft to 280 characters first." : undefined}
           >
             <Send size={15} />
-            {publishingTarget === "x" ? "Posting…" : "Post X"}
+            {published.x
+              ? "X Published"
+              : publishingTarget === "x"
+                ? "Posting…"
+                : "Post X"}
           </button>
 
           <button
-            className={readyToPublish && xChars <= 280 ? "publish-active" : "publish-disabled"}
-            disabled={!readyToPublish || xChars > 280 || Boolean(publishingTarget)}
+            className={
+              readyToPublish &&
+              xChars <= 280 &&
+              !published.linkedin &&
+              !published.x
+                ? "publish-active"
+                : "publish-disabled"
+            }
+            disabled={
+              !readyToPublish ||
+              published.linkedin ||
+              published.x ||
+              xChars > 280 ||
+              Boolean(publishingTarget)
+            }
             onClick={() => publish("both")}
             type="button"
           >
             <Send size={15} />
             {publishingTarget === "both" ? "Posting both…" : "Post Both"}
           </button>
+
+          {published.linkedin || published.x ? (
+            <button className="secondary new-post-button" onClick={startNewPost} type="button">
+              <Sparkles size={15} />
+              New Post
+            </button>
+          ) : null}
         </div>
       </div>
     </main>

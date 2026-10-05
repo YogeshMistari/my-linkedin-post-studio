@@ -55,7 +55,9 @@ Edit:
 config/creator.config.ts
 ```
 
-This is the creator DNA file. A different creator can replace the current profile, expertise, proof, opinions, voice and content strategy there without rewriting the prompt engine.
+This is the creator DNA file. A different creator can replace the current profile, expertise, proof, opinions, voice, content strategy and Topic Library there without rewriting the prompt engine.
+
+The Topic Library powers the left-side idea picker in the UI. Each topic can include optional angles/sub-text suggestions that users can select, edit or replace with their own notes.
 
 ## Default local stack
 

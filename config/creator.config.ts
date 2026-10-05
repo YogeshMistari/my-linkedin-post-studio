@@ -132,6 +132,139 @@ export const creatorConfig = {
     northStar:
       "Build professional trust and authenticity first, then convert that trust into relevant follower growth.",
 
+    topicLibrary: [
+      {
+        id: "de-roadmap",
+        category: "Career",
+        topic: "If I had to start Data Engineering again, this is the roadmap I would follow",
+        angles: [
+          "Keep it practical: SQL → Python → data modelling → Spark → one cloud. Explain why this order matters.",
+          "Focus on what beginners waste time learning and what they should prioritize instead.",
+          "Frame it as a 90-day roadmap for someone trying to become job-ready.",
+        ],
+      },
+      {
+        id: "lead-de-lessons",
+        category: "Career",
+        topic: "What helped me grow into a Lead Data Engineer in 5+ years",
+        angles: [
+          "Talk about ownership, understanding business context, communication and visibility, not only technical skills.",
+          "Share the difference between being a good coder and being trusted with delivery.",
+          "Keep it as 5 practical lessons I wish I understood earlier.",
+        ],
+      },
+      {
+        id: "certifications",
+        category: "Career",
+        topic: "Are Data Engineering certifications actually worth it?",
+        angles: [
+          "Take a balanced view: certifications help visibility, but they cannot replace practical depth.",
+          "Explain when certifications are useful and when they become certificate collecting.",
+          "Compare one strong project plus one relevant certification versus many certificates with weak fundamentals.",
+        ],
+      },
+      {
+        id: "switch-plan",
+        category: "Career",
+        topic: "How I would prepare for a Data Engineering job switch in the next 60 days",
+        angles: [
+          "Break it into fundamentals, projects, interview scenarios, resume and targeted applications.",
+          "Focus on experienced professionals who already know tools but need interview readiness.",
+          "Make it a weekly checklist that people can save.",
+        ],
+      },
+      {
+        id: "resume-ats",
+        category: "Career",
+        topic: "Stop optimizing your Data Engineering resume only for an ATS score",
+        angles: [
+          "Explain why clear impact, numbers and believable project depth matter more than a random ATS percentage.",
+          "Give a short checklist for an ATS-friendly but human-readable resume.",
+          "Call out common mistakes: tool dumping, vague bullets and responsibilities without outcomes.",
+        ],
+      },
+      {
+        id: "databricks-interview",
+        category: "Databricks",
+        topic: "Databricks interview questions that actually test a Data Engineer",
+        angles: [
+          "Use scenario-based questions around Delta Lake, Jobs, Unity Catalog and performance.",
+          "Explain what a strong candidate should think about instead of giving only definitions.",
+          "Frame it as 5 questions I would ask in a real Data Engineering interview.",
+        ],
+      },
+      {
+        id: "databricks-production",
+        category: "Databricks",
+        topic: "What changes when a Databricks pipeline moves from demo to production",
+        angles: [
+          "Cover retries, observability, bad data, idempotency, costs and ownership.",
+          "Contrast a notebook that works once with a pipeline that can be trusted every day.",
+          "Use a checklist format that working Data Engineers can save.",
+        ],
+      },
+      {
+        id: "spark-performance",
+        category: "Spark",
+        topic: "More compute is not the first answer to every slow Spark job",
+        angles: [
+          "Talk about skew, shuffles, joins, partitions and reading the execution plan before scaling compute.",
+          "Use a simple before/after troubleshooting sequence.",
+          "Frame it as a performance mistake I see engineers make too quickly.",
+        ],
+      },
+      {
+        id: "happy-path",
+        category: "Pipelines",
+        topic: "A pipeline that works only for the happy path is not production-ready",
+        angles: [
+          "Use examples like late data, duplicates, schema changes, partial failures and retries.",
+          "Give 5 questions to ask before calling a pipeline production-ready.",
+          "Make the hook about why a green job status does not always mean correct data.",
+        ],
+      },
+      {
+        id: "late-data",
+        category: "Pipelines",
+        topic: "How I think about late-arriving data in real pipelines",
+        angles: [
+          "Explain event time versus processing time in simple English with one small example.",
+          "Cover watermarking, backfills and idempotent processing without making it too theoretical.",
+          "Frame it as an interview scenario plus the production answer.",
+        ],
+      },
+      {
+        id: "sql-depth",
+        category: "Fundamentals",
+        topic: "The SQL skills a Data Engineer should be genuinely strong at",
+        angles: [
+          "Focus on joins, window functions, aggregations, CTEs, debugging and performance thinking.",
+          "Explain why memorizing syntax is less useful than reasoning about data.",
+          "Make it a practical checklist for interview preparation.",
+        ],
+      },
+      {
+        id: "data-modelling",
+        category: "Fundamentals",
+        topic: "Data modelling is one of the most underrated Data Engineering skills",
+        angles: [
+          "Explain why good pipelines can still produce hard-to-use data if the model is poor.",
+          "Use simple examples around grain, facts, dimensions and business questions.",
+          "Frame it as what interviewers expect beyond definitions.",
+        ],
+      },
+      {
+        id: "ai-data-engineering",
+        category: "AI + DE",
+        topic: "AI will not remove the need for strong Data Engineers, but it will raise the expectations",
+        angles: [
+          "Explain which work AI can accelerate and which fundamentals still need engineering judgement.",
+          "Focus on how Data Engineers should adapt their learning strategy.",
+          "Keep it practical and avoid generic AI hype.",
+        ],
+      },
+    ],
+
     growthPrinciples: [
       "Virality is an outcome, not a promise. Never sacrifice credibility for clicks.",
       "Every post should give the reader a reason to trust the creator more.",
