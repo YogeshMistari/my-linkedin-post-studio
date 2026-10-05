@@ -43,8 +43,10 @@ The script will:
 Then run:
 
 ```bash
-npm run dev
+npm run dev:all
 ```
+
+After the first setup, this is the only startup command you need.
 
 Open:
 
