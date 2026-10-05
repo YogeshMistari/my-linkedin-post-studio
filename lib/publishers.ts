@@ -24,30 +24,57 @@ function safeErrorDetail(raw: string) {
   }
 }
 
+async function resolveLinkedInAuthor(accessToken: string) {
+  const response = await fetch("https://api.linkedin.com/v2/userinfo", {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+    cache: "no-store",
+  });
+
+  const raw = await response.text();
+
+  if (!response.ok) {
+    throw new Error(
+      `LinkedIn userinfo returned ${response.status}: ${safeErrorDetail(raw)}`
+    );
+  }
+
+  const data = raw ? JSON.parse(raw) : {};
+  const subject = String(data?.sub || "").trim();
+
+  if (!subject) {
+    throw new Error(
+      "LinkedIn userinfo did not return a member identifier (sub)."
+    );
+  }
+
+  return `urn:li:person:${subject}`;
+}
+
 export function getPublishingConfig() {
   return {
-    linkedinConfigured: Boolean(
-      env("LINKEDIN_ACCESS_TOKEN") && env("LINKEDIN_AUTHOR_URN")
-    ),
+    linkedinConfigured: Boolean(env("LINKEDIN_ACCESS_TOKEN")),
     xConfigured: Boolean(env("X_USER_ACCESS_TOKEN")),
   };
 }
 
 export async function publishLinkedIn(text: string): Promise<PublishResult> {
   const accessToken = env("LINKEDIN_ACCESS_TOKEN");
-  const author = env("LINKEDIN_AUTHOR_URN");
   const version = env("LINKEDIN_VERSION") || "202609";
 
-  if (!accessToken || !author) {
+  if (!accessToken) {
     return {
       platform: "linkedin",
       success: false,
       error:
-        "LinkedIn is not configured. Add LINKEDIN_ACCESS_TOKEN and LINKEDIN_AUTHOR_URN to .env.local.",
+        "LinkedIn is not configured. Add LINKEDIN_ACCESS_TOKEN to .env.local.",
     };
   }
 
   try {
+    const author = await resolveLinkedInAuthor(accessToken);
+
     const response = await fetch("https://api.linkedin.com/rest/posts", {
       method: "POST",
       headers: {

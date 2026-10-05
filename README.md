@@ -36,11 +36,10 @@ Add to `.env.local`:
 
 ```env
 LINKEDIN_ACCESS_TOKEN=
-LINKEDIN_AUTHOR_URN=urn:li:person:YOUR_MEMBER_ID
 LINKEDIN_VERSION=202609
 ```
 
-The LinkedIn access token must be authorized to publish as the member.
+The LinkedIn access token should include `openid`, `profile`, and `w_member_social`. The app calls LinkedIn's OIDC `/v2/userinfo` endpoint and derives the member author automatically, so you do not need to configure a Person URN manually.
 
 ### X
 
