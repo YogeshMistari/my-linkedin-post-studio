@@ -10,8 +10,12 @@
 export const creatorConfig = {
   app: {
     name: "Post Studio",
-    brandInitial: "A",
-    tagline: "Build trust. Share expertise. Grow the right audience.",
+    brandInitial: "DWA",
+    tagline: "Create authentic content. Build trust. Grow professionally.",
+    logoPath: "/brand/data-with-anurag-logo.png",
+    logoAlt: "Data With Anurag Logo",
+    initiativeBy: "Anurag Srivastava",
+    initiativeRole: "Founder, Data With Anurag",
   },
 
   creator: {

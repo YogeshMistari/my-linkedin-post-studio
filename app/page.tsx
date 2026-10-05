@@ -16,10 +16,6 @@ import {
   Upload,
   WandSparkles,
   Send,
-  ShieldCheck,
-  Target,
-  TrendingUp,
-  BrainCircuit,
 } from "lucide-react";
 import { creatorConfig } from "@/config/creator.config";
 import type {
@@ -318,7 +314,7 @@ export default function Home() {
         <div className="platform-head">
           <div className="platform-name">
             <span className={`platform-logo ${isLinkedIn ? "linkedin-logo" : "x-logo"}`}>
-              {isLinkedIn ? "in" : "𝕏"}
+              {isLinkedIn ? "in" : "X"}
             </span>
             <span>
               {label}
@@ -402,44 +398,37 @@ export default function Home() {
     <main className="shell">
       <header className="topbar">
         <div className="brand">
-          <div className="brand-mark">
-            <Sparkles size={20} />
+          <div className="brand-logo-shell" aria-label={creatorConfig.app.logoAlt}>
+            <span className="brand-logo-fallback">DWA</span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={creatorConfig.app.logoPath}
+              alt={creatorConfig.app.logoAlt}
+              onError={(event) => {
+                event.currentTarget.style.display = "none";
+              }}
+            />
           </div>
           <div>
-            <span className="brand-eyebrow">Creator Growth Studio</span>
+            <span className="brand-eyebrow">{creatorConfig.creator.creatorIdentity.brand}</span>
             <h1>{creatorConfig.app.name}</h1>
-            <p>{creatorConfig.creator.name} · {creatorConfig.creator.positioning.primaryIdentity}</p>
+            <p>{creatorConfig.app.tagline}</p>
           </div>
         </div>
-        <div className="status-cluster">
-          <span className="status-pill local"><span className="status-dot" /> Local AI</span>
-          <span className="status-pill"><BrainCircuit size={13} /> Creator DNA loaded</span>
+
+        <div className="topbar-note">
+          <span className="status-dot" />
+          Local AI ready
         </div>
       </header>
 
       <section className="hero-panel">
-        <div className="hero-copy">
-          <span className="hero-kicker"><TrendingUp size={14} /> Authority → Trust → Followers</span>
-          <h2>Turn your expertise into content people <span>trust and follow.</span></h2>
-          <p>
-            Every draft is optimized for credibility, useful insight and follower growth
-            without sacrificing authenticity for clickbait.
-          </p>
-        </div>
-        <div className="hero-principles">
-          <div className="principle-card">
-            <ShieldCheck size={20} />
-            <div><strong>Trust first</strong><span>Proof over hype</span></div>
-          </div>
-          <div className="principle-card">
-            <Target size={20} />
-            <div><strong>Right audience</strong><span>Relevant reach</span></div>
-          </div>
-          <div className="principle-card">
-            <TrendingUp size={20} />
-            <div><strong>Growth ready</strong><span>Save & share value</span></div>
-          </div>
-        </div>
+        <span className="hero-kicker">Built for professional creators</span>
+        <h2>Build authority. Earn trust. <span>Grow with useful content.</span></h2>
+        <p>
+          Create LinkedIn and X posts from your real expertise, keep your voice,
+          review everything, then publish only what you approve.
+        </p>
       </section>
 
       <section className="card composer">
@@ -642,6 +631,12 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <footer className="brand-footer">
+        <span>An Initiative by</span>
+        <strong>Anurag Srivastava</strong>
+        <span>Founder, Data With Anurag</span>
+      </footer>
 
       <div className={`publish-strip ${approval.linkedin || approval.x ? "ready" : ""}`}>
         <div>

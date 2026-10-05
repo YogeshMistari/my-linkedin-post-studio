@@ -23,6 +23,30 @@ Open `http://localhost:3000`.
 
 Full installation, models, environment variables and publishing requirements are in **[REQUIREMENTS.md](./REQUIREMENTS.md)**.
 
+## Branding
+
+The UI uses the Data With Anurag black + yellow brand system.
+
+The logo is mapped to:
+
+```text
+public/brand/data-with-anurag-logo.png
+```
+
+Display name / alt text:
+
+```text
+Data With Anurag Logo
+```
+
+If the image is not present yet, the app automatically shows a DWA fallback mark.
+
+Brand credit shown in the app:
+
+```text
+An Initiative by Anurag Srivastava · Founder, Data With Anurag
+```
+
 ## Personalize the whole app in one file
 
 Edit:
