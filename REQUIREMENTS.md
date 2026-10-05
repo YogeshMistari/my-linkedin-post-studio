@@ -10,7 +10,7 @@ This is the single setup reference for running Post Studio locally.
 | Local image generation | Draw Things CLI | `flux_2_klein_4b_q8p.ckpt` |
 | Web app | Next.js + React | Node.js 22+ |
 | LinkedIn publishing | LinkedIn API | Member OAuth token |
-| X publishing | X API | User OAuth token |
+| X publishing | X web composer | Free / no API token |
 
 ## System requirements
 
@@ -118,13 +118,11 @@ The app resolves the authenticated member with LinkedIn OIDC userinfo.
 
 ### X publishing
 
-Optional until you want direct publishing:
+X uses the free web-composer flow.
 
-```env
-X_USER_ACCESS_TOKEN=
-```
+No X API key, OAuth token, billing, or paid API access is required. The app opens X with the approved draft prefilled and you click Post manually.
 
-Use a user-context token that can create posts.
+Generated/uploaded images are not automatically attached to X in this free flow.
 
 ## Security
 
