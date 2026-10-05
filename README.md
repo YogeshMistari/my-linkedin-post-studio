@@ -1,17 +1,13 @@
 # LinkedIn + X Post Studio
 
-A personal content copilot for generating, reviewing and approving platform-native posts for LinkedIn and X.
+A personal content copilot for generating, reviewing, approving and publishing platform-native posts for LinkedIn and X.
 
 ## Local AI stack
-
-V1 can now run fully locally for both text and images:
 
 - **Text:** Ollama + `gemma3:4b`
 - **Images:** Draw Things CLI + `flux_2_klein_4b_q8p.ckpt`
 
-No paid API is required for this setup.
-
-## Configure `.env.local`
+## Local AI configuration
 
 ```env
 AI_PROVIDER=ollama
@@ -24,43 +20,47 @@ DRAWTHINGS_MODEL=flux_2_klein_4b_q8p.ckpt
 DRAWTHINGS_STEPS=4
 ```
 
-## Make sure Ollama is ready
+## Real social publishing
 
-```bash
-ollama run gemma3:4b
+The app now supports three explicit actions:
+
+- **Post LinkedIn**
+- **Post X**
+- **Post Both**
+
+A platform's button only activates after that platform draft is approved. Every publish action asks for final confirmation before making the API request.
+
+### LinkedIn
+
+Add to `.env.local`:
+
+```env
+LINKEDIN_ACCESS_TOKEN=
+LINKEDIN_AUTHOR_URN=urn:li:person:YOUR_MEMBER_ID
+LINKEDIN_VERSION=202609
 ```
 
-Exit the chat with `/bye`. Verify the local API:
+The LinkedIn access token must be authorized to publish as the member.
 
-```bash
-curl http://127.0.0.1:11434/api/tags
+### X
+
+Add to `.env.local`:
+
+```env
+X_USER_ACCESS_TOKEN=
 ```
 
-## Make sure Draw Things is ready
+This must be a user-context access token authorized to create posts.
 
-Verify the CLI:
+### Important
 
-```bash
-draw-things-cli --help
-```
+The current direct publishing milestone publishes **text only**.
 
-Ensure the image model is installed:
+If you generated or uploaded an image, the app will warn that the image was not attached. Media upload for LinkedIn and X is a separate API flow and is the next publishing milestone.
 
-```bash
-draw-things-cli models ensure --model "flux_2_klein_4b_q8p.ckpt"
-```
+X drafts over 280 characters are not published yet. Shorten the draft first. Thread publishing will be added separately.
 
-Test image generation:
-
-```bash
-draw-things-cli generate \
-  --prompt "minimal clean social media graphic about data engineering roadmap" \
-  --model "flux_2_klein_4b_q8p.ckpt" \
-  --width 1024 \
-  --height 1024 \
-  --steps 4 \
-  --output /tmp/post-studio-test.png
-```
+If **Post Both** gets one success and one failure, do not click Post Both again. The app reports the successful platform and you should retry only the failed platform to avoid duplicate posts.
 
 ## Start the app
 
@@ -69,25 +69,12 @@ npm install
 npm run dev
 ```
 
-Open:
+Open `http://localhost:3000`.
 
-```text
-http://localhost:3000
-```
+## Personalization
 
-## V1 flow
+- `lib/creator-profile.ts` contains public-safe professional background.
+- `lib/content-playbook.ts` contains recurring viewpoints, content themes and writing habits.
+- `lib/prompts.ts` combines them with each new topic.
 
-1. Enter a topic and optional personal notes.
-2. Generate separate LinkedIn and X drafts with Ollama.
-3. Edit/regenerate each platform independently.
-4. Review the suggested image concept.
-5. Edit the image prompt if needed.
-6. Click **Generate image** to render locally through Draw Things.
-7. Approve the drafts.
-8. Publishing/OAuth comes in a later milestone.
-
-## Personalization safety
-
-`lib/creator-profile.ts` contains only public-safe facts that are allowed to appear in generated public content.
-
-Do not add confidential client details, compensation, private family information, secrets, or unapproved claims to that file.
+Keep private client information, compensation, family details and secrets out of the public creator profile.

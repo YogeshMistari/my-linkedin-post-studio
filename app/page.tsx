@@ -54,7 +54,7 @@ export default function Home() {
     x: "",
   });
   const [contextOpen, setContextOpen] = useState(false);
-  const [publishLoading, setPublishLoading] = useState(false);
+  const [publishingTarget, setPublishingTarget] = useState<"linkedin" | "x" | "both" | null>(null);
   const [publishMessage, setPublishMessage] = useState("");
   const uploadRef = useRef<HTMLInputElement>(null);
 
@@ -180,10 +180,41 @@ export default function Home() {
     }
   }
 
-  async function preparePublish() {
-    if (!readyToPublish) return;
+  async function publish(target: "linkedin" | "x" | "both") {
+    const needsLinkedIn = target === "linkedin" || target === "both";
+    const needsX = target === "x" || target === "both";
 
-    setPublishLoading(true);
+    if (needsLinkedIn && !approval.linkedin) {
+      setError("Approve the LinkedIn draft before publishing it.");
+      return;
+    }
+
+    if (needsX && !approval.x) {
+      setError("Approve the X draft before publishing it.");
+      return;
+    }
+
+    if (needsX && content.x.length > 280) {
+      setError(
+        "The X draft is over 280 characters. Shorten it before publishing. Thread publishing is not enabled yet."
+      );
+      return;
+    }
+
+    const label =
+      target === "linkedin"
+        ? "LinkedIn"
+        : target === "x"
+          ? "X"
+          : "LinkedIn and X";
+
+    const confirmed = window.confirm(
+      `Publish this approved draft to ${label} now? This action goes live immediately.`
+    );
+
+    if (!confirmed) return;
+
+    setPublishingTarget(target);
     setPublishMessage("");
     setError("");
 
@@ -193,19 +224,25 @@ export default function Home() {
       linkedin: content.linkedin,
       x: content.x,
       imageChoice,
-      imageUrl,
+      hasImage: Boolean(imageUrl),
+      target,
       approvedAt: new Date().toISOString(),
     };
 
     try {
-      localStorage.setItem("post-studio:last-approved-draft", JSON.stringify(snapshot));
+      localStorage.setItem(
+        "post-studio:last-approved-draft",
+        JSON.stringify(snapshot)
+      );
 
-      const response = await fetch("/api/publish/prepare", {
+      const response = await fetch("/api/publish", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          hasLinkedIn: Boolean(content.linkedin),
-          hasX: Boolean(content.x),
+          target,
+          linkedinText: content.linkedin,
+          xText: content.x,
+          approvals: approval,
           hasImage: Boolean(imageUrl),
         }),
       });
@@ -213,27 +250,40 @@ export default function Home() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Unable to prepare publishing.");
+        throw new Error(data.error || "Publishing failed.");
       }
 
-      if (data.ready) {
+      const successes = (data.results || [])
+        .filter((item: { success: boolean }) => item.success)
+        .map((item: { platform: string; id?: string }) =>
+          item.platform === "linkedin"
+            ? `LinkedIn${item.id ? ` (${item.id})` : ""}`
+            : `X${item.id ? ` (${item.id})` : ""}`
+        );
+
+      const failures = (data.results || [])
+        .filter((item: { success: boolean }) => !item.success)
+        .map((item: { platform: string; error?: string }) =>
+          `${item.platform === "linkedin" ? "LinkedIn" : "X"}: ${item.error || "failed"}`
+        );
+
+      if (data.allSucceeded) {
         setPublishMessage(
-          "Draft is ready and both social connections are configured. Direct publishing is the next step."
+          `Published successfully to ${successes.join(" and ")}.${
+            data.warning ? ` ${data.warning}` : ""
+          }`
+        );
+      } else if (data.partialSuccess) {
+        setPublishMessage(
+          `Published to ${successes.join(" and ")}. The other platform failed, so do not repost the successful one. ${failures.join(" | ")}`
         );
       } else {
-        const missing = [
-          !data.linkedinConfigured ? "LinkedIn" : "",
-          !data.xConfigured ? "X" : "",
-        ].filter(Boolean);
-
-        setPublishMessage(
-          `Approved draft saved. Connect ${missing.join(" and ")} before direct publishing.`
-        );
+        setError(failures.join(" | ") || "Publishing failed.");
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to prepare publishing.");
+      setError(err instanceof Error ? err.message : "Publishing failed.");
     } finally {
-      setPublishLoading(false);
+      setPublishingTarget(null);
     }
   }
 
@@ -513,26 +563,52 @@ export default function Home() {
         </div>
       </section>
 
-      <div className={`publish-strip ${readyToPublish ? "ready" : ""}`}>
+      <div className={`publish-strip ${approval.linkedin || approval.x ? "ready" : ""}`}>
         <div>
-          <strong>{readyToPublish ? "Content approved" : "Review before publishing"}</strong>
+          <strong>
+            {approval.linkedin || approval.x
+              ? "Approved content ready"
+              : "Review before publishing"}
+          </strong>
           <span>
             {publishMessage
               ? publishMessage
-              : readyToPublish
-                ? "Both drafts are approved. You can now prepare the first post."
-                : "Approve LinkedIn and X independently. Editing a draft removes its approval."}
+              : "Approve a platform draft to enable its publish button. Editing a draft removes its approval."}
           </span>
         </div>
-        <button
-          className={readyToPublish ? "publish-active" : "publish-disabled"}
-          disabled={!readyToPublish || publishLoading}
-          onClick={preparePublish}
-          type="button"
-        >
-          <Send size={15} />
-          {publishLoading ? "Preparing…" : "Post both"}
-        </button>
+
+        <div className="publish-actions">
+          <button
+            className={approval.linkedin ? "publish-linkedin" : "publish-disabled"}
+            disabled={!approval.linkedin || Boolean(publishingTarget)}
+            onClick={() => publish("linkedin")}
+            type="button"
+          >
+            <Send size={15} />
+            {publishingTarget === "linkedin" ? "Posting…" : "Post LinkedIn"}
+          </button>
+
+          <button
+            className={approval.x && xChars <= 280 ? "publish-x" : "publish-disabled"}
+            disabled={!approval.x || xChars > 280 || Boolean(publishingTarget)}
+            onClick={() => publish("x")}
+            type="button"
+            title={xChars > 280 ? "Shorten the X draft to 280 characters first." : undefined}
+          >
+            <Send size={15} />
+            {publishingTarget === "x" ? "Posting…" : "Post X"}
+          </button>
+
+          <button
+            className={readyToPublish && xChars <= 280 ? "publish-active" : "publish-disabled"}
+            disabled={!readyToPublish || xChars > 280 || Boolean(publishingTarget)}
+            onClick={() => publish("both")}
+            type="button"
+          >
+            <Send size={15} />
+            {publishingTarget === "both" ? "Posting both…" : "Post Both"}
+          </button>
+        </div>
       </div>
     </main>
   );
