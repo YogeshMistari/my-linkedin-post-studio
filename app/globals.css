@@ -185,7 +185,8 @@ button:disabled { cursor: not-allowed; }
 .primary,
 .secondary,
 .approve,
-.publish-disabled {
+.publish-disabled,
+.publish-active {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -453,6 +454,22 @@ button:disabled { cursor: not-allowed; }
   border: 1px solid var(--border);
   background: #20232b;
   color: #707684;
+}
+
+.publish-active {
+  border: 1px solid #547764;
+  background: #dff7e9;
+  color: #112319;
+  box-shadow: 0 8px 28px rgba(71, 151, 109, .16);
+}
+
+.publish-active:hover:not(:disabled) {
+  background: #eefbf4;
+  transform: translateY(-1px);
+}
+
+.publish-active:disabled {
+  opacity: .55;
 }
 
 @media (max-width: 900px) {

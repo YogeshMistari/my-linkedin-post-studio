@@ -15,6 +15,7 @@ import {
   Sparkles,
   Upload,
   WandSparkles,
+  Send,
 } from "lucide-react";
 import type {
   ApprovalState,
@@ -53,6 +54,8 @@ export default function Home() {
     x: "",
   });
   const [contextOpen, setContextOpen] = useState(false);
+  const [publishLoading, setPublishLoading] = useState(false);
+  const [publishMessage, setPublishMessage] = useState("");
   const uploadRef = useRef<HTMLInputElement>(null);
 
   const hasDrafts = Boolean(content.linkedin || content.x);
@@ -174,6 +177,63 @@ export default function Home() {
     }
     if (choice === "upload") {
       uploadRef.current?.click();
+    }
+  }
+
+  async function preparePublish() {
+    if (!readyToPublish) return;
+
+    setPublishLoading(true);
+    setPublishMessage("");
+    setError("");
+
+    const snapshot = {
+      topic,
+      notes,
+      linkedin: content.linkedin,
+      x: content.x,
+      imageChoice,
+      imageUrl,
+      approvedAt: new Date().toISOString(),
+    };
+
+    try {
+      localStorage.setItem("post-studio:last-approved-draft", JSON.stringify(snapshot));
+
+      const response = await fetch("/api/publish/prepare", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          hasLinkedIn: Boolean(content.linkedin),
+          hasX: Boolean(content.x),
+          hasImage: Boolean(imageUrl),
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Unable to prepare publishing.");
+      }
+
+      if (data.ready) {
+        setPublishMessage(
+          "Draft is ready and both social connections are configured. Direct publishing is the next step."
+        );
+      } else {
+        const missing = [
+          !data.linkedinConfigured ? "LinkedIn" : "",
+          !data.xConfigured ? "X" : "",
+        ].filter(Boolean);
+
+        setPublishMessage(
+          `Approved draft saved. Connect ${missing.join(" and ")} before direct publishing.`
+        );
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to prepare publishing.");
+    } finally {
+      setPublishLoading(false);
     }
   }
 
@@ -457,13 +517,21 @@ export default function Home() {
         <div>
           <strong>{readyToPublish ? "Content approved" : "Review before publishing"}</strong>
           <span>
-            {readyToPublish
-              ? "Both platform drafts are approved. OAuth publishing comes in the next milestone."
-              : "Approve LinkedIn and X independently. Editing a draft removes its approval."}
+            {publishMessage
+              ? publishMessage
+              : readyToPublish
+                ? "Both drafts are approved. You can now prepare the first post."
+                : "Approve LinkedIn and X independently. Editing a draft removes its approval."}
           </span>
         </div>
-        <button className="publish-disabled" disabled type="button">
-          Publish both
+        <button
+          className={readyToPublish ? "publish-active" : "publish-disabled"}
+          disabled={!readyToPublish || publishLoading}
+          onClick={preparePublish}
+          type="button"
+        >
+          <Send size={15} />
+          {publishLoading ? "Preparing…" : "Post both"}
         </button>
       </div>
     </main>
