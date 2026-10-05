@@ -153,7 +153,7 @@ async function uploadLinkedInImage({
 export function getPublishingConfig() {
   return {
     linkedinConfigured: Boolean(env("LINKEDIN_ACCESS_TOKEN")),
-    xConfigured: Boolean(env("X_USER_ACCESS_TOKEN")),
+    xMode: "web-composer",
   };
 }
 
@@ -253,59 +253,3 @@ export async function publishLinkedIn(
   }
 }
 
-export async function publishX(text: string): Promise<PublishResult> {
-  const accessToken = env("X_USER_ACCESS_TOKEN");
-
-  if (!accessToken) {
-    return {
-      platform: "x",
-      success: false,
-      error:
-        "X is not configured. Add X_USER_ACCESS_TOKEN to .env.local.",
-    };
-  }
-
-  if (text.length > 280) {
-    return {
-      platform: "x",
-      success: false,
-      error:
-        "This X draft is over 280 characters. Shorten it before publishing. Thread publishing will be added separately.",
-    };
-  }
-
-  try {
-    const response = await fetch("https://api.x.com/2/tweets", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ text }),
-    });
-
-    const raw = await response.text();
-    const data = raw ? JSON.parse(raw) : {};
-
-    if (!response.ok) {
-      return {
-        platform: "x",
-        success: false,
-        error: `X returned ${response.status}: ${safeErrorDetail(raw)}`,
-      };
-    }
-
-    return {
-      platform: "x",
-      success: true,
-      id: data?.data?.id ? String(data.data.id) : undefined,
-    };
-  } catch (error) {
-    return {
-      platform: "x",
-      success: false,
-      error:
-        error instanceof Error ? error.message : "Unknown X publishing error.",
-    };
-  }
-}
