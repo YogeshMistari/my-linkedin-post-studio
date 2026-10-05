@@ -339,8 +339,11 @@ export const creatorConfig = {
         "Always include the configured required brand hashtags at the end of every post.",
         "Do not add extra hashtags unless they are highly relevant.",
         "Use 1-3 relevant emojis maximum when they improve scanning or emphasis. Do not decorate every line.",
-        "Never use Markdown bold/italic markers such as **, *, __, _, or backticks in post text.",
-        "Use plain text headings or simple bullets like • instead of Markdown formatting.",
+        "For LinkedIn, limited emphasis using exactly one asterisk on each side is allowed, for example *SQL Deep Dive:*.",
+        "Use this only for a few short labels or key phrases. Do not style full paragraphs.",
+        "Never use double, triple, or longer asterisk runs such as **text**, ***text***, or ****text****.",
+        "Avoid underscores, backticks, and Markdown headings.",
+        "Use simple bullets like • for lists.",
       ],
       x: [
         "Write independently for X instead of shortening LinkedIn.",

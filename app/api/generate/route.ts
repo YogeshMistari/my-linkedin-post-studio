@@ -16,17 +16,22 @@ function extractJson(text: string) {
   return JSON.parse(cleaned);
 }
 
-function sanitizeSocialText(text: string) {
-  return text
+function sanitizeSocialText(text: string, platform: "linkedin" | "x") {
+  let result = text
     .replace(/\r\n/g, "\n")
-    .replace(/\*\*/g, "")
-    .replace(/\*/g, "")
     .replace(/__/g, "")
     .replace(/\x60/g, "")
     .replace(/^#{1,6}\s+/gm, "")
     .replace(/^\s*-\s+/gm, "• ")
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
+    .replace(/\n{3,}/g, "\n\n");
+
+  if (platform === "linkedin") {
+    result = result.replace(/\*{2,}/g, "*");
+  } else {
+    result = result.replace(/\*+/g, "");
+  }
+
+  return result.trim();
 }
 
 function ensureRequiredHashtags(text: string) {
@@ -124,8 +129,11 @@ export async function POST(request: Request) {
 
     const parsed = extractJson(raw);
 
-    const linkedinRaw = sanitizeSocialText(String(parsed.linkedin ?? ""));
-    const xRaw = sanitizeSocialText(String(parsed.x ?? ""));
+    const linkedinRaw = sanitizeSocialText(
+      String(parsed.linkedin ?? ""),
+      "linkedin"
+    );
+    const xRaw = sanitizeSocialText(String(parsed.x ?? ""), "x");
 
     const linkedin = linkedinRaw ? ensureRequiredHashtags(linkedinRaw) : "";
     const x = xRaw ? ensureRequiredHashtags(xRaw) : "";

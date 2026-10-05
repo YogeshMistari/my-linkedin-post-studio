@@ -121,8 +121,12 @@ ${creatorProfile.voice.avoid.map((item) => `- Avoid: ${item}`).join("\n")}
 - Do not use em dashes.
 - Do not force a CTA or engagement question.
 - Never invent a personal story, metric, employer, client, credential or result.
-- LinkedIn and X do not need Markdown formatting here. Never output **bold**, *italics*, __underline__, backticks, or Markdown headings.
-- Use plain text. If you need a list, prefer clean bullets like • or simple numbering.
+- For LinkedIn only, use exactly one asterisk on each side when you want to emphasize a short phrase, for example *SQL Deep Dive:* or *can do*.
+- Do not use **double**, ***triple***, or longer asterisk runs.
+- Keep emphasis limited to a few short labels or phrases, not whole paragraphs.
+- Do not use underscores, backticks, or Markdown headings.
+- For X, use plain text without asterisk formatting.
+- If you need a list, prefer clean bullets like • or simple numbering.
 - Emojis are optional. Use only 1-3 relevant emojis maximum when they genuinely improve scanning or emphasis. Do not add an emoji to every point.
 
 LINKEDIN
