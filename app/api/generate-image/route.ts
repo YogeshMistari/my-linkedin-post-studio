@@ -5,6 +5,18 @@ const DEFAULT_IMAGE_MODEL = "gpt-image-2.5-flare";
 
 export async function POST(request: Request) {
   try {
+    const provider = (process.env.IMAGE_PROVIDER || "").toLowerCase();
+
+    if (provider !== "openai") {
+      return NextResponse.json(
+        {
+          error:
+            "Local Ollama is handling text only. For V1, use Upload mine or set IMAGE_PROVIDER=openai with API credits.",
+        },
+        { status: 503 }
+      );
+    }
+
     const { concept } = await request.json();
 
     if (!concept?.trim()) {
@@ -38,12 +50,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ imageUrl });
   } catch (error) {
     console.error(error);
-
-    const message =
-      error instanceof Error && error.message.includes("OPENAI_API_KEY")
-        ? "OPENAI_API_KEY is not configured. Add it to .env.local and restart the dev server."
-        : "Image generation failed. Check your OpenAI API key/billing and try again.";
-
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json(
+      {
+        error:
+          "Image generation failed. For the free local V1, use Upload mine.",
+      },
+      { status: 500 }
+    );
   }
 }
