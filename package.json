@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "setup:local": "bash scripts/setup-local-ai.sh",
-    "ai:check": "bash scripts/check-local-ai.sh"
+    "ai:check": "bash scripts/check-local-ai.sh",
+    "dev:all": "bash scripts/dev-all.sh"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",
