@@ -88,17 +88,17 @@ No paid AI API is required for the default local generation flow.
 5. Review/edit each platform independently.
 6. Optionally generate a local visual with Draw Things.
 7. Approve LinkedIn and/or X.
-8. Publish LinkedIn, X or both.
+8. Publish LinkedIn directly, or open the approved X draft in X for the final click.
 
 ## Publishing
 
 The app supports:
 
-- **Post LinkedIn**
-- **Post X**
-- **Post Both**
+- **Post LinkedIn** — publishes through the LinkedIn API.
+- **Open in X** — opens X with the approved text prefilled. You review it and click Post manually.
+- **Publish LinkedIn + Open X** — publishes LinkedIn first, then opens the approved X draft in the X composer.
 
-LinkedIn publishing now supports attaching the currently generated or uploaded image to a post. The app uploads the image to LinkedIn first and then creates the post with that image attached. X publishing is still text-only for now.
+LinkedIn publishing supports attaching the currently generated or uploaded image. X uses the free web-composer flow, so no X API token or paid X API access is required. X images are not auto-attached in this free flow.
 
 ## Important files
 
