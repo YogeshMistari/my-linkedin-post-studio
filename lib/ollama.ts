@@ -30,7 +30,8 @@ export async function generateWithOllama({
           { role: "user", content: user },
         ],
         options: {
-          temperature: 0.75,
+          temperature: 0.55,
+          top_p: 0.9,
         },
       }),
     });
