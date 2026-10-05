@@ -4,6 +4,21 @@ type OllamaChatResponse = {
   };
 };
 
+const SOCIAL_DRAFT_SCHEMA = {
+  type: "object",
+  properties: {
+    linkedin: { type: "string" },
+    x: { type: "string" },
+    imageConcept: { type: "string" },
+    contextUsed: {
+      type: "array",
+      items: { type: "string" },
+    },
+  },
+  required: ["linkedin", "x", "imageConcept", "contextUsed"],
+  additionalProperties: false,
+} as const;
+
 const DEFAULT_OLLAMA_URL = "http://127.0.0.1:11434";
 const DEFAULT_OLLAMA_MODEL = "gemma3:4b";
 
@@ -25,13 +40,13 @@ export async function generateWithOllama({
       body: JSON.stringify({
         model,
         stream: false,
-        format: "json",
+        format: SOCIAL_DRAFT_SCHEMA,
         messages: [
           { role: "system", content: system },
           { role: "user", content: user },
         ],
         options: {
-          temperature: 0.55,
+          temperature: 0.45,
           top_p: 0.9,
         },
       }),
