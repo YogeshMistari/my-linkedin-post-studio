@@ -102,7 +102,7 @@ export async function POST(request: Request) {
 
     const provider = (process.env.AI_PROVIDER || "ollama").toLowerCase();
 
-    const raw =
+    let raw =
       provider === "openai"
         ? await generateWithOpenAI({ instructions, input })
         : await generateWithOllama({
@@ -110,16 +110,16 @@ export async function POST(request: Request) {
             user: input,
           });
 
-    const parsed = extractJson(raw);
+    let parsed = extractJson(raw);
 
-    const linkedinRaw = formatSocialText(
+    let linkedinRaw = formatSocialText(
       String(parsed.linkedin ?? ""),
       "linkedin"
     );
-    const xRaw = formatSocialText(String(parsed.x ?? ""), "x");
+    let xRaw = formatSocialText(String(parsed.x ?? ""), "x");
 
-    const linkedin = linkedinRaw ? ensureRequiredHashtags(linkedinRaw) : "";
-    const x = xRaw ? ensureRequiredHashtags(xRaw) : "";
+    let linkedin = linkedinRaw ? ensureRequiredHashtags(linkedinRaw) : "";
+    let x = xRaw ? ensureRequiredHashtags(xRaw) : "";
 
     const missingRequiredDraft =
       (mode === "both" && (!linkedin || !x)) ||
@@ -127,17 +127,104 @@ export async function POST(request: Request) {
       (mode === "x" && !x);
 
     if (missingRequiredDraft) {
-      console.error("AI returned an incomplete draft payload:", parsed);
-      return NextResponse.json(
-        {
-          error:
-            "The local model returned an empty draft. Please generate again. If this repeats, restart Ollama.",
-        },
-        {
-          status: 502,
-          headers: { "Cache-Control": "no-store" },
-        }
+      const missingLinkedIn =
+        (mode === "both" || mode === "linkedin") && !linkedin;
+      const missingX = (mode === "both" || mode === "x") && !x;
+
+      const recoveryMode: GenerationMode =
+        missingLinkedIn && missingX
+          ? "both"
+          : missingLinkedIn
+            ? "linkedin"
+            : "x";
+
+      console.warn(
+        `AI returned an incomplete draft. Auto-retrying: ${recoveryMode}`
       );
+
+      const recoveryInstructions = [
+        "You are repairing an incomplete social-media draft.",
+        "Return ONLY valid JSON with exactly these keys: linkedin, x, imageConcept, contextUsed.",
+        `Generate mode: ${recoveryMode}.`,
+        recoveryMode === "both"
+          ? "linkedin and x must both be non-empty."
+          : `${recoveryMode} must be non-empty; leave the other platform as an empty string.`,
+        "Use simple natural English and a strong hook.",
+        "LinkedIn: short paragraphs, 3-5 useful points or clean • bullets, no asterisk list bullets.",
+        "LinkedIn may use *short phrase* only as an internal emphasis marker.",
+        "X: plain text and concise.",
+        `Always leave room for ${contentPlaybook.requiredHashtags.join(" ")}.`,
+        "Never invent a client, metric, employer, result, or personal story.",
+      ].join("\n");
+
+      const recoveryInput = [
+        `Topic: ${topic.trim()}`,
+        notes ? `Additional notes/context: ${notes.trim()}` : "",
+        feedback ? `Requested change: ${feedback.trim()}` : "",
+        `Content goal: ${contentGoal}`,
+      ]
+        .filter(Boolean)
+        .join("\n\n");
+
+      raw =
+        provider === "openai"
+          ? await generateWithOpenAI({
+              instructions: recoveryInstructions,
+              input: recoveryInput,
+            })
+          : await generateWithOllama({
+              system: recoveryInstructions,
+              user: recoveryInput,
+            });
+
+      const recoveredParsed = extractJson(raw);
+
+      if (missingLinkedIn) {
+        linkedinRaw = formatSocialText(
+          String(recoveredParsed.linkedin ?? ""),
+          "linkedin"
+        );
+        linkedin = linkedinRaw ? ensureRequiredHashtags(linkedinRaw) : "";
+      }
+
+      if (missingX) {
+        xRaw = formatSocialText(String(recoveredParsed.x ?? ""), "x");
+        x = xRaw ? ensureRequiredHashtags(xRaw) : "";
+      }
+
+      parsed = {
+        ...parsed,
+        imageConcept:
+          parsed.imageConcept || recoveredParsed.imageConcept || "",
+        contextUsed:
+          Array.isArray(parsed.contextUsed) && parsed.contextUsed.length
+            ? parsed.contextUsed
+            : recoveredParsed.contextUsed || [],
+      };
+
+      const stillMissing =
+        (mode === "both" && (!linkedin || !x)) ||
+        (mode === "linkedin" && !linkedin) ||
+        (mode === "x" && !x);
+
+      if (stillMissing) {
+        console.error("AI remained incomplete after automatic retry:", {
+          mode,
+          parsed,
+          recoveredParsed,
+        });
+
+        return NextResponse.json(
+          {
+            error:
+              "The local model could not complete the draft after an automatic retry. Try once more; if this keeps happening, switch to a larger Ollama model.",
+          },
+          {
+            status: 502,
+            headers: { "Cache-Control": "no-store" },
+          }
+        );
+      }
     }
 
     const contextUsed = Array.isArray(parsed.contextUsed)
