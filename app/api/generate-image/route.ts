@@ -6,6 +6,18 @@ export const runtime = "nodejs";
 
 const DEFAULT_OPENAI_IMAGE_MODEL = "gpt-image-2.5-flare";
 
+function buildVisualPrompt(concept: string) {
+  return [
+    "Create a clean, premium square social-media visual for a Data Engineering creator.",
+    "VISUAL ONLY.",
+    "Absolutely no text, no words, no letters, no numbers, no captions, no labels, no logos, no UI text, no watermarks, no code snippets.",
+    "Do not create a poster, presentation slide, infographic with written content, or typography-based design.",
+    "Use simple visual storytelling with objects, shapes, systems, paths, layers, databases, cloud/data-flow elements, or an engineering workspace.",
+    "Modern, professional, minimal, balanced composition, low clutter.",
+    `Visual concept: ${concept.trim()}`,
+  ].join("\n");
+}
+
 export async function POST(request: Request) {
   try {
     const { concept } = await request.json();
@@ -18,10 +30,11 @@ export async function POST(request: Request) {
     }
 
     const provider = (process.env.IMAGE_PROVIDER || "drawthings").toLowerCase();
+    const visualPrompt = buildVisualPrompt(concept);
 
     if (provider === "drawthings") {
       const { imageUrl } = await generateImageWithDrawThings({
-        prompt: concept.trim(),
+        prompt: visualPrompt,
         width: 1024,
         height: 1024,
       });
@@ -36,12 +49,7 @@ export async function POST(request: Request) {
 
       const result = await client.images.generate({
         model,
-        prompt: [
-          "Create a premium social-media visual for a Data Engineering creator.",
-          "Clean, modern, professional, human-designed feel, low clutter, strong hierarchy.",
-          "Avoid generic AI people, random laptops, cyberpunk neon, and tiny unreadable text.",
-          `Concept: ${concept.trim()}`,
-        ].join("\n"),
+        prompt: visualPrompt,
         size: "1536x1024",
       });
 

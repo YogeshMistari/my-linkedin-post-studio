@@ -56,20 +56,8 @@ WRITING STYLE — FOLLOW THIS STRICTLY
 - Explain WHY something matters, not just WHAT to do.
 - Prefer concrete examples over vague statements.
 - It is okay to sound direct.
-- It is okay to use simple phrases like "I have seen this many times", "In my experience", "I would do this instead", or "This is where people make a mistake" when they fit naturally.
 
 DO NOT WRITE LIKE AI
-- Do not use phrases such as:
-  "In today's fast-paced world"
-  "Let's dive in"
-  "Here's the thing"
-  "The key takeaway"
-  "This is a game changer"
-  "Unlock the power of"
-  "It is not about X, it is about Y"
-  "Whether you are a beginner or an experienced professional"
-  "I am thrilled/excited to share"
-  "At the end of the day"
 - Do not use dramatic motivational language.
 - Do not use corporate language.
 - Do not use unnecessary adjectives like "powerful", "incredible", "transformative", "cutting-edge", "robust", or "seamless" unless technically required.
@@ -89,7 +77,6 @@ LINKEDIN STYLE
 - Use proper paragraphs with 2 to 4 sentences where possible.
 - Keep the flow natural: opinion or experience -> explanation -> practical advice.
 - For roadmap topics, give a clear sequence, but explain each stage in normal language instead of just listing tool names.
-- Avoid generic advice such as "keep learning", "stay consistent", and "network more" unless you add something specific and useful.
 - Usually aim for about 250 to 500 words unless the user's request suggests otherwise.
 
 X STYLE
@@ -102,9 +89,13 @@ X STYLE
 - No unnecessary hashtags.
 
 IMAGE CONCEPT
-- When mode is "both", suggest one clean visual idea.
+- When mode is "both", suggest ONE visual-only concept for a square social image.
+- The concept must describe only the scene, illustration, or composition.
+- Do NOT ask the image model to render words, labels, captions, UI text, logos, letters, numbers, code, charts with labels, or typography.
+- Prefer clean visual metaphors: data pipelines, layered architecture, connected systems, cloud/data flow, database shapes, engineering workspace, abstract infrastructure.
+- Keep it professional, minimal and easy to understand at a glance.
+- If the topic is a roadmap, show progression visually using shapes, paths, stages, or objects, NOT written step names.
 - When regenerating one platform, keep imageConcept empty.
-- Keep the concept simple and useful, not an AI-art description.
 
 CONTEXT USED
 - Return only the approved creator-profile facts actually used.
