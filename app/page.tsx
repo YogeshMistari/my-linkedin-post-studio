@@ -18,6 +18,7 @@ import {
   Send,
   Lightbulb,
   Search,
+  ExternalLink,
 } from "lucide-react";
 import { creatorConfig } from "@/config/creator.config";
 import type {
@@ -74,6 +75,7 @@ export default function Home() {
   const [contextOpen, setContextOpen] = useState(false);
   const [publishingTarget, setPublishingTarget] = useState<"linkedin" | "x" | "both" | null>(null);
   const [publishMessage, setPublishMessage] = useState("");
+  const [xOpened, setXOpened] = useState(false);
   const [published, setPublished] = useState<ApprovalState>({
     linkedin: false,
     x: false,
@@ -114,11 +116,13 @@ export default function Home() {
     if (mode === "both") {
       setApproval({ linkedin: false, x: false });
       setPublished({ linkedin: false, x: false });
+      setXOpened(false);
       setImageUrl("");
       setUploadedImageName("");
     } else {
       setApproval((current) => ({ ...current, [mode]: false }));
       setPublished((current) => ({ ...current, [mode]: false }));
+      if (mode === "x") setXOpened(false);
     }
 
     const platformFeedback =
@@ -194,6 +198,7 @@ export default function Home() {
     setContent((current) => ({ ...current, [platform]: value }));
     setApproval((current) => ({ ...current, [platform]: false }));
     setPublished((current) => ({ ...current, [platform]: false }));
+    if (platform === "x") setXOpened(false);
     setPublishMessage("");
   }
 
@@ -259,6 +264,7 @@ export default function Home() {
     setContent(emptyContent);
     setApproval({ linkedin: false, x: false });
     setPublished({ linkedin: false, x: false });
+    setXOpened(false);
     setImageUrl("");
     setUploadedImageName("");
     setFeedback({ linkedin: "", x: "" });
@@ -272,41 +278,57 @@ export default function Home() {
     }, 50);
   }
 
-  async function publish(target: "linkedin" | "x" | "both") {
-    const needsLinkedIn = target === "linkedin" || target === "both";
-    const needsX = target === "x" || target === "both";
+  function buildXIntentUrl() {
+    return `https://twitter.com/intent/tweet?text=${encodeURIComponent(content.x)}`;
+  }
 
-    if (needsLinkedIn && !approval.linkedin) {
+  function openXComposer() {
+    if (!approval.x) {
+      setError("Approve the X draft before opening it.");
+      return;
+    }
+
+    if (content.x.length > 280) {
+      setError("The X draft is over 280 characters. Shorten it before opening X.");
+      return;
+    }
+
+    window.open(buildXIntentUrl(), "_blank", "noopener,noreferrer");
+    setXOpened(true);
+    setPublishMessage(
+      "X composer opened with your approved draft. Review it there and click Post manually."
+    );
+    setError("");
+  }
+
+  async function publishLinkedIn(openXAfter = false) {
+    if (!approval.linkedin) {
       setError("Approve the LinkedIn draft before publishing it.");
       return;
     }
 
-    if (needsX && !approval.x) {
-      setError("Approve the X draft before publishing it.");
+    if (openXAfter && !approval.x) {
+      setError("Approve the X draft before using Publish LinkedIn + Open X.");
       return;
     }
 
-    if (needsX && content.x.length > 280) {
-      setError(
-        "The X draft is over 280 characters. Shorten it before publishing. Thread publishing is not enabled yet."
-      );
+    if (openXAfter && content.x.length > 280) {
+      setError("The X draft is over 280 characters. Shorten it first.");
       return;
     }
-
-    const label =
-      target === "linkedin"
-        ? "LinkedIn"
-        : target === "x"
-          ? "X"
-          : "LinkedIn and X";
 
     const confirmed = window.confirm(
-      `Publish this approved draft to ${label} now? This action goes live immediately.`
+      openXAfter
+        ? "Publish the approved LinkedIn post now, then open the approved X draft in X for your final click?"
+        : "Publish this approved LinkedIn draft now? This goes live immediately."
     );
 
     if (!confirmed) return;
 
-    setPublishingTarget(target);
+    const xWindow = openXAfter ? window.open("about:blank", "_blank") : null;
+    if (xWindow) xWindow.opener = null;
+
+    setPublishingTarget(openXAfter ? "both" : "linkedin");
     setPublishMessage("");
     setError("");
 
@@ -317,7 +339,7 @@ export default function Home() {
       x: content.x,
       imageChoice,
       hasImage: Boolean(imageUrl),
-      target,
+      target: openXAfter ? "linkedin+x-composer" : "linkedin",
       approvedAt: new Date().toISOString(),
     };
 
@@ -331,11 +353,9 @@ export default function Home() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          target,
+          target: "linkedin",
           linkedinText: content.linkedin,
-          xText: content.x,
           approvals: approval,
-          hasImage: Boolean(imageUrl),
           imageDataUrl: imageUrl || "",
           imageAltText:
             content.imageConcept.trim().slice(0, 120) ||
@@ -346,47 +366,43 @@ export default function Home() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Publishing failed.");
+        if (xWindow) xWindow.close();
+        throw new Error(data.error || "LinkedIn publishing failed.");
       }
 
-      const successfulPlatforms = (data.results || [])
-        .filter((item: { success: boolean }) => item.success)
-        .map((item: { platform: Platform }) => item.platform);
+      const linkedInResult = (data.results || []).find(
+        (item: { platform: string; success: boolean }) =>
+          item.platform === "linkedin" && item.success
+      );
 
-      if (successfulPlatforms.length) {
-        setPublished((current) => ({
-          linkedin:
-            current.linkedin || successfulPlatforms.includes("linkedin"),
-          x: current.x || successfulPlatforms.includes("x"),
-        }));
+      if (!linkedInResult) {
+        if (xWindow) xWindow.close();
+        throw new Error("LinkedIn publishing failed.");
       }
 
-      const successes = (data.results || [])
-        .filter((item: { success: boolean }) => item.success)
-        .map((item: { platform: string; id?: string }) =>
-          item.platform === "linkedin"
-            ? `LinkedIn${item.id ? ` (${item.id})` : ""}`
-            : `X${item.id ? ` (${item.id})` : ""}`
-        );
+      setPublished((current) => ({ ...current, linkedin: true }));
 
-      const failures = (data.results || [])
-        .filter((item: { success: boolean }) => !item.success)
-        .map((item: { platform: string; error?: string }) =>
-          `${item.platform === "linkedin" ? "LinkedIn" : "X"}: ${item.error || "failed"}`
-        );
+      if (openXAfter) {
+        const xUrl = buildXIntentUrl();
 
-      if (data.allSucceeded) {
+        if (xWindow) {
+          xWindow.location.href = xUrl;
+        } else {
+          window.open(xUrl, "_blank", "noopener,noreferrer");
+        }
+
+        setXOpened(true);
         setPublishMessage(
-          `Published successfully to ${successes.join(" and ")}.${
-            data.warning ? ` ${data.warning}` : ""
-          }`
-        );
-      } else if (data.partialSuccess) {
-        setPublishMessage(
-          `Published to ${successes.join(" and ")}. The other platform failed, so do not repost the successful one. ${failures.join(" | ")}`
+          linkedInResult.imageAttached
+            ? "LinkedIn published with the image. X composer opened with your text; review and click Post there."
+            : "LinkedIn published. X composer opened with your text; review and click Post there."
         );
       } else {
-        setError(failures.join(" | ") || "Publishing failed.");
+        setPublishMessage(
+          linkedInResult.imageAttached
+            ? "LinkedIn published successfully with the selected image."
+            : "LinkedIn published successfully."
+        );
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Publishing failed.");
@@ -822,7 +838,7 @@ export default function Home() {
               published.linkedin ||
               Boolean(publishingTarget)
             }
-            onClick={() => publish("linkedin")}
+            onClick={() => publishLinkedIn(false)}
             type="button"
           >
             <Send size={15} />
@@ -835,52 +851,47 @@ export default function Home() {
 
           <button
             className={
-              approval.x && xChars <= 280 && !published.x
+              approval.x && xChars <= 280
                 ? "publish-x"
                 : "publish-disabled"
             }
             disabled={
               !approval.x ||
-              published.x ||
               xChars > 280 ||
               Boolean(publishingTarget)
             }
-            onClick={() => publish("x")}
+            onClick={openXComposer}
             type="button"
-            title={xChars > 280 ? "Shorten the X draft to 280 characters first." : undefined}
+            title={xChars > 280 ? "Shorten the X draft to 280 characters first." : "Opens X with the text prefilled. You click Post there."}
           >
-            <Send size={15} />
-            {published.x
-              ? "X Published"
-              : publishingTarget === "x"
-                ? "Posting…"
-                : "Post X"}
+            <ExternalLink size={15} />
+            {xOpened ? "Open X Again" : "Open in X"}
           </button>
 
           <button
             className={
               readyToPublish &&
               xChars <= 280 &&
-              !published.linkedin &&
-              !published.x
+              !published.linkedin
                 ? "publish-active"
                 : "publish-disabled"
             }
             disabled={
               !readyToPublish ||
               published.linkedin ||
-              published.x ||
               xChars > 280 ||
               Boolean(publishingTarget)
             }
-            onClick={() => publish("both")}
+            onClick={() => publishLinkedIn(true)}
             type="button"
           >
             <Send size={15} />
-            {publishingTarget === "both" ? "Posting both…" : "Post Both"}
+            {publishingTarget === "both"
+              ? "Publishing LinkedIn…"
+              : "Publish LinkedIn + Open X"}
           </button>
 
-          {published.linkedin || published.x ? (
+          {published.linkedin || xOpened ? (
             <button className="secondary new-post-button" onClick={startNewPost} type="button">
               <Sparkles size={15} />
               New Post
