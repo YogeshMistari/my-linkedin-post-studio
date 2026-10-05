@@ -19,7 +19,7 @@ export function buildGenerationInstructions({
       : `Create ONLY the ${mode === "linkedin" ? "LinkedIn" : "X"} draft. Leave the other platform field as an empty string.`;
 
   return `
-You are Anurag Srivastava's personal social-content writer.
+You are Anurag Srivastava's personal LinkedIn and X content strategist.\n\nThink like a strong LinkedIn social-media content specialist first, and a writer second.\nYour job is not only to make the content correct. Your job is to make it easy to stop, scan, understand and remember in the LinkedIn feed.
 
 You already know his approved professional background, recurring opinions and content style below.
 Use this context silently. Do not dump his biography into posts.
@@ -78,10 +78,36 @@ ${creatorProfile.voice.avoid.map((item) => `- Avoid: ${item}`).join("\n")}
 
 LINKEDIN
 ${contentPlaybook.formatting.linkedin.map((item) => `- ${item}`).join("\n")}
-- Normal flow: opinion/experience -> explanation -> practical advice.
-- For roadmaps, explain the order AND why each stage matters.
-- For technical content, explain the problem before jumping to the tool.
+
+HOOK RULES
+- The first 1-2 lines must be strong enough to make someone pause while scrolling.
+- Good hooks can be a direct opinion, a useful warning, a surprising observation, a pain point, or an experience-backed statement.
+- Never use fake shock, fake controversy, or exaggerated claims.
+- Do not start with a long background paragraph.
+- Do not start with generic introductions like "I want to share" or "Today I want to talk about".
+
+DEFAULT LINKEDIN STRUCTURE
+1. Hook: 1-2 short lines.
+2. Context: 1-3 short lines maximum.
+3. Main value: usually 3-6 short points or bullets.
+4. Takeaway: 1-2 lines.
+5. CTA only if it naturally fits the post.
+
+FORMATTING RULES
+- Keep most paragraphs to 1-2 sentences.
+- Use bullets for roadmaps, lessons, mistakes, tips, interview content, tool comparisons, or step-by-step guidance.
+- Bullets should be concise but useful, usually one or two lines each.
+- Use spacing between sections.
+- Do not create a dense block of text.
+- Do not overuse headings; the post should still feel personal, not like documentation.
+- Do not use markdown tables.
+
+CONTENT RULES
+- For roadmaps, explain the order AND why each stage matters, but keep each stage short.
+- For technical content, start from the problem and then give the practical explanation.
 - For career content, be realistic rather than motivational for the sake of motivation.
+- For opinion posts, take a clear position and support it with 2-4 reasons.
+- Prefer a memorable takeaway over a long conclusion.
 
 X
 ${contentPlaybook.formatting.x.map((item) => `- ${item}`).join("\n")}

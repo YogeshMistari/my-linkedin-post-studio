@@ -51,10 +51,17 @@ export const contentPlaybook = {
 
   formatting: {
     linkedin: [
-      "Use proper paragraphs, normally 2-4 sentences each.",
-      "Do not make every sentence its own paragraph.",
-      "Prefer 250-500 words for a normal educational post.",
-      "Lists are fine for roadmaps, checklists, mistakes, interview questions or step-by-step content.",
+      "Write for LinkedIn feed consumption, not like a blog article.",
+      "Start with a strong hook in the first 1-2 lines. The hook should create curiosity, tension, a useful promise, or a direct opinion without clickbait.",
+      "Keep the opening very short. Do not explain the whole topic before the hook lands.",
+      "Use short, scan-friendly blocks. Most paragraphs should be 1-2 sentences.",
+      "Use bullets or short point-style sections whenever they make the post easier to scan.",
+      "Prefer 3-6 useful points over long paragraphs.",
+      "For educational posts, a good structure is: hook -> short context -> 3-6 practical points -> one clear takeaway.",
+      "For roadmaps, checklists, mistakes and interview posts, default to point-style formatting.",
+      "Each point should add a new idea. Do not repeat the same message in different words.",
+      "Keep a normal post around 140-280 words unless the topic genuinely needs more depth.",
+      "Use whitespace deliberately so the post does not look dense.",
       "Keep language easy enough for students and working engineers to understand quickly.",
       "Use 0-2 hashtags only when useful.",
       "Use emojis only when the content is intentionally promotional or the user asks for them.",
@@ -70,9 +77,9 @@ export const contentPlaybook = {
   contentModes: {
     defaultEducational: {
       tone:
-        "Simple, practical, calm, experienced and human. No hype unless the topic itself calls for excitement.",
+        "Simple, practical, experienced and easy to scan. It should feel written for the LinkedIn feed, not for a blog.",
       cta:
-        "Usually no CTA. End with the practical point. A simple discussion question is okay only when natural.",
+        "Usually end with one useful takeaway or a short opinion. A discussion question is okay only when it genuinely fits.",
     },
 
     careerOpinion: {
@@ -84,7 +91,7 @@ export const contentPlaybook = {
 
     technicalBreakdown: {
       tone:
-        "Explain the problem, why it happens, a small example, and what you would do in a real project.",
+        "Open with the technical pain point, then break the explanation into short practical points. Use a small example only when it makes the idea clearer.",
       cta:
         "Usually none.",
     },
