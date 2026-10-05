@@ -16,20 +16,32 @@ function extractJson(text: string) {
   return JSON.parse(cleaned);
 }
 
+function sanitizeSocialText(text: string) {
+  return text
+    .replace(/\r\n/g, "\n")
+    .replace(/\*\*/g, "")
+    .replace(/\*/g, "")
+    .replace(/__/g, "")
+    .replace(/\x60/g, "")
+    .replace(/^#{1,6}\s+/gm, "")
+    .replace(/^\s*-\s+/gm, "• ")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
 function ensureRequiredHashtags(text: string) {
-  let result = text.trim();
+  const result = text.trim();
 
-  for (const hashtag of contentPlaybook.requiredHashtags) {
-    const hasHashtag = result
-      .split(/\s+/)
-      .some((token) => token.toLowerCase() === hashtag.toLowerCase());
+  const missing = contentPlaybook.requiredHashtags.filter((hashtag) => {
+    const escaped = hashtag.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return !new RegExp(`(^|\\s)${escaped}(?=\\s|$)`, "i").test(result);
+  });
 
-    if (!hasHashtag) {
-      result = `${result}\n\n${hashtag}`.trim();
-    }
+  if (!missing.length) {
+    return result;
   }
 
-  return result;
+  return `${result}\n\n${missing.join(" ")}`.trim();
 }
 
 async function generateWithOpenAI({
@@ -112,8 +124,8 @@ export async function POST(request: Request) {
 
     const parsed = extractJson(raw);
 
-    const linkedinRaw = String(parsed.linkedin ?? "").trim();
-    const xRaw = String(parsed.x ?? "").trim();
+    const linkedinRaw = sanitizeSocialText(String(parsed.linkedin ?? ""));
+    const xRaw = sanitizeSocialText(String(parsed.x ?? ""));
 
     const linkedin = linkedinRaw ? ensureRequiredHashtags(linkedinRaw) : "";
     const x = xRaw ? ensureRequiredHashtags(xRaw) : "";

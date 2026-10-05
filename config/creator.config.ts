@@ -338,7 +338,9 @@ export const creatorConfig = {
         "Use whitespace deliberately.",
         "Always include the configured required brand hashtags at the end of every post.",
         "Do not add extra hashtags unless they are highly relevant.",
-        "Use emojis only when they genuinely help the format or the user asks for them.",
+        "Use 1-3 relevant emojis maximum when they improve scanning or emphasis. Do not decorate every line.",
+        "Never use Markdown bold/italic markers such as **, *, __, _, or backticks in post text.",
+        "Use plain text headings or simple bullets like • instead of Markdown formatting.",
       ],
       x: [
         "Write independently for X instead of shortening LinkedIn.",

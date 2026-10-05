@@ -10,6 +10,19 @@ export const runtime = "nodejs";
 
 type PublishTarget = "linkedin" | "x" | "both";
 
+function sanitizePublishText(text: string) {
+  return text
+    .replace(/\r\n/g, "\n")
+    .replace(/\*\*/g, "")
+    .replace(/\*/g, "")
+    .replace(/__/g, "")
+    .replace(/\x60/g, "")
+    .replace(/^#{1,6}\s+/gm, "")
+    .replace(/^\s*-\s+/gm, "• ")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
 export async function GET() {
   return NextResponse.json(getPublishingConfig());
 }
@@ -19,9 +32,16 @@ export async function POST(request: Request) {
     const body = await request.json();
 
     const target = body?.target as PublishTarget;
-    const linkedinText = String(body?.linkedinText || "").trim();
-    const xText = String(body?.xText || "").trim();
+    const linkedinText = sanitizePublishText(
+      String(body?.linkedinText || "")
+    );
+    const xText = sanitizePublishText(String(body?.xText || ""));
     const approvals = body?.approvals || {};
+    const imageDataUrl =
+      typeof body?.imageDataUrl === "string" && body.imageDataUrl.startsWith("data:image/")
+        ? body.imageDataUrl
+        : "";
+    const imageAltText = String(body?.imageAltText || "").trim();
 
     if (!["linkedin", "x", "both"].includes(target)) {
       return NextResponse.json(
@@ -52,11 +72,20 @@ export async function POST(request: Request) {
 
     const results: PublishResult[] = [];
 
-    // Intentionally publish sequentially. If the first platform succeeds and
-    // the second fails, the caller gets a partial result and can retry only
-    // the failed platform, avoiding duplicate posts.
+    // Publish sequentially so a partial success can be retried safely
+    // without duplicating the platform that already succeeded.
     if (target === "linkedin" || target === "both") {
-      results.push(await publishLinkedIn(linkedinText));
+      results.push(
+        await publishLinkedIn(
+          linkedinText,
+          imageDataUrl
+            ? {
+                dataUrl: imageDataUrl,
+                altText: imageAltText,
+              }
+            : null
+        )
+      );
     }
 
     if (target === "x" || target === "both") {
@@ -66,13 +95,26 @@ export async function POST(request: Request) {
     const succeeded = results.filter((item) => item.success);
     const failed = results.filter((item) => !item.success);
 
+    const linkedInResult = results.find(
+      (item) => item.platform === "linkedin" && item.success
+    );
+
+    let warning: string | null = null;
+
+    if (imageDataUrl && target === "x") {
+      warning =
+        "The image is ready, but X image publishing is not connected yet. X was published as text only.";
+    } else if (imageDataUrl && target === "both") {
+      warning = linkedInResult?.imageAttached
+        ? "Image attached to LinkedIn. X was published as text only."
+        : "X was published as text only.";
+    }
+
     return NextResponse.json({
       allSucceeded: failed.length === 0,
       partialSuccess: succeeded.length > 0 && failed.length > 0,
       results,
-      warning: body?.hasImage
-        ? "The current direct-publish version is text-only. The selected image was not attached."
-        : null,
+      warning,
     });
   } catch (error) {
     console.error(error);

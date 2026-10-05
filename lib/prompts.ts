@@ -121,6 +121,9 @@ ${creatorProfile.voice.avoid.map((item) => `- Avoid: ${item}`).join("\n")}
 - Do not use em dashes.
 - Do not force a CTA or engagement question.
 - Never invent a personal story, metric, employer, client, credential or result.
+- LinkedIn and X do not need Markdown formatting here. Never output **bold**, *italics*, __underline__, backticks, or Markdown headings.
+- Use plain text. If you need a list, prefer clean bullets like • or simple numbering.
+- Emojis are optional. Use only 1-3 relevant emojis maximum when they genuinely improve scanning or emphasis. Do not add an emoji to every point.
 
 LINKEDIN
 ${contentPlaybook.formatting.linkedin.map((item) => `- ${item}`).join("\n")}

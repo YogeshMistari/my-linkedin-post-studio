@@ -90,7 +90,7 @@ The app supports:
 - **Post X**
 - **Post Both**
 
-The current publishing flow is text-first. Media attachment APIs are a separate milestone.
+LinkedIn publishing now supports attaching the currently generated or uploaded image to a post. The app uploads the image to LinkedIn first and then creates the post with that image attached. X publishing is still text-only for now.
 
 ## Important files
 

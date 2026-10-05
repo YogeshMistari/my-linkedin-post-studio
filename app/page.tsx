@@ -336,6 +336,10 @@ export default function Home() {
           xText: content.x,
           approvals: approval,
           hasImage: Boolean(imageUrl),
+          imageDataUrl: imageUrl || "",
+          imageAltText:
+            content.imageConcept.trim().slice(0, 120) ||
+            "Visual accompanying this Data With Anurag post",
         }),
       });
 

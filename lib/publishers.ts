@@ -2,7 +2,13 @@ export type PublishResult = {
   platform: "linkedin" | "x";
   success: boolean;
   id?: string;
+  imageAttached?: boolean;
   error?: string;
+};
+
+type LinkedInImage = {
+  dataUrl: string;
+  altText?: string;
 };
 
 function env(name: string) {
@@ -52,6 +58,98 @@ async function resolveLinkedInAuthor(accessToken: string) {
   return `urn:li:person:${subject}`;
 }
 
+function decodeDataUrl(dataUrl: string) {
+  const match = dataUrl.match(
+    /^data:(image\/(?:png|jpeg|jpg|gif));base64,([A-Za-z0-9+/=\s]+)$/i
+  );
+
+  if (!match) {
+    throw new Error(
+      "The selected image is not a supported PNG, JPG, JPEG, or GIF data image."
+    );
+  }
+
+  const mimeType =
+    match[1].toLowerCase() === "image/jpg"
+      ? "image/jpeg"
+      : match[1].toLowerCase();
+
+  return {
+    mimeType,
+    bytes: Buffer.from(match[2].replace(/\s/g, ""), "base64"),
+  };
+}
+
+async function uploadLinkedInImage({
+  accessToken,
+  version,
+  owner,
+  image,
+}: {
+  accessToken: string;
+  version: string;
+  owner: string;
+  image: LinkedInImage;
+}) {
+  const initialized = await fetch(
+    "https://api.linkedin.com/rest/images?action=initializeUpload",
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+        "Linkedin-Version": version,
+        "X-Restli-Protocol-Version": "2.0.0",
+      },
+      body: JSON.stringify({
+        initializeUploadRequest: {
+          owner,
+        },
+      }),
+    }
+  );
+
+  const initializeRaw = await initialized.text();
+
+  if (!initialized.ok) {
+    throw new Error(
+      `LinkedIn image initialization returned ${initialized.status}: ${safeErrorDetail(
+        initializeRaw
+      )}`
+    );
+  }
+
+  const initializeData = initializeRaw ? JSON.parse(initializeRaw) : {};
+  const uploadUrl = String(initializeData?.value?.uploadUrl || "");
+  const imageUrn = String(initializeData?.value?.image || "");
+
+  if (!uploadUrl || !imageUrn) {
+    throw new Error("LinkedIn did not return an image upload URL.");
+  }
+
+  const { mimeType, bytes } = decodeDataUrl(image.dataUrl);
+
+  const uploaded = await fetch(uploadUrl, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": mimeType,
+    },
+    body: new Uint8Array(bytes),
+  });
+
+  if (!uploaded.ok) {
+    const detail = await uploaded.text();
+    throw new Error(
+      `LinkedIn image upload returned ${uploaded.status}: ${safeErrorDetail(
+        detail
+      )}`
+    );
+  }
+
+  return imageUrn;
+}
+
 export function getPublishingConfig() {
   return {
     linkedinConfigured: Boolean(env("LINKEDIN_ACCESS_TOKEN")),
@@ -59,7 +157,10 @@ export function getPublishingConfig() {
   };
 }
 
-export async function publishLinkedIn(text: string): Promise<PublishResult> {
+export async function publishLinkedIn(
+  text: string,
+  image?: LinkedInImage | null
+): Promise<PublishResult> {
   const accessToken = env("LINKEDIN_ACCESS_TOKEN");
   const version = env("LINKEDIN_VERSION") || "202609";
 
@@ -74,6 +175,33 @@ export async function publishLinkedIn(text: string): Promise<PublishResult> {
 
   try {
     const author = await resolveLinkedInAuthor(accessToken);
+
+    let mediaContent:
+      | {
+          media: {
+            id: string;
+            altText: string;
+          };
+        }
+      | undefined;
+
+    if (image?.dataUrl) {
+      const imageUrn = await uploadLinkedInImage({
+        accessToken,
+        version,
+        owner: author,
+        image,
+      });
+
+      mediaContent = {
+        media: {
+          id: imageUrn,
+          altText:
+            image.altText?.trim().slice(0, 120) ||
+            "Visual accompanying this Data With Anurag post",
+        },
+      };
+    }
 
     const response = await fetch("https://api.linkedin.com/rest/posts", {
       method: "POST",
@@ -92,6 +220,7 @@ export async function publishLinkedIn(text: string): Promise<PublishResult> {
           targetEntities: [],
           thirdPartyDistributionChannels: [],
         },
+        ...(mediaContent ? { content: mediaContent } : {}),
         lifecycleState: "PUBLISHED",
         isReshareDisabledByAuthor: false,
       }),
@@ -110,6 +239,7 @@ export async function publishLinkedIn(text: string): Promise<PublishResult> {
       platform: "linkedin",
       success: true,
       id: response.headers.get("x-restli-id") || undefined,
+      imageAttached: Boolean(mediaContent),
     };
   } catch (error) {
     return {
