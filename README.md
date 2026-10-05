@@ -16,8 +16,16 @@ It optimizes for useful hooks, practitioner insight, saves/shares and follow int
 git clone https://github.com/anuanurag2410/linkedin-x-post.git
 cd linkedin-x-post
 bash scripts/setup-local-ai.sh
-npm run dev
+npm run dev:all
 ```
+
+After the first setup, use only:
+
+```bash
+npm run dev:all
+```
+
+This starts Ollama automatically when needed, checks the configured local model, and then starts Post Studio. Draw Things CLI runs on demand only when you generate an image. Press Ctrl+C to stop the development session.
 
 Open `http://localhost:3000`.
 
