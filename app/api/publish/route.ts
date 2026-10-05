@@ -2,14 +2,11 @@ import { NextResponse } from "next/server";
 import {
   getPublishingConfig,
   publishLinkedIn,
-  publishX,
   type PublishResult,
 } from "@/lib/publishers";
 import { formatSocialText } from "@/lib/social-format";
 
 export const runtime = "nodejs";
-
-type PublishTarget = "linkedin" | "x" | "both";
 
 export async function GET() {
   return NextResponse.json(getPublishingConfig());
@@ -19,91 +16,55 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    const target = body?.target as PublishTarget;
+    const target = String(body?.target || "");
     const linkedinText = formatSocialText(
       String(body?.linkedinText || ""),
       "linkedin"
     );
-    const xText = formatSocialText(String(body?.xText || ""), "x");
     const approvals = body?.approvals || {};
     const imageDataUrl =
-      typeof body?.imageDataUrl === "string" && body.imageDataUrl.startsWith("data:image/")
+      typeof body?.imageDataUrl === "string" &&
+      body.imageDataUrl.startsWith("data:image/")
         ? body.imageDataUrl
         : "";
     const imageAltText = String(body?.imageAltText || "").trim();
 
-    if (!["linkedin", "x", "both"].includes(target)) {
+    if (target !== "linkedin") {
       return NextResponse.json(
-        { error: "Invalid publishing target." },
+        {
+          error:
+            "Only LinkedIn is published through the API. X uses the free web composer flow.",
+        },
         { status: 400 }
       );
     }
 
-    if (
-      (target === "linkedin" || target === "both") &&
-      (!approvals.linkedin || !linkedinText)
-    ) {
+    if (!approvals.linkedin || !linkedinText) {
       return NextResponse.json(
         { error: "Approve the LinkedIn draft before publishing it." },
         { status: 400 }
       );
     }
 
-    if (
-      (target === "x" || target === "both") &&
-      (!approvals.x || !xText)
-    ) {
-      return NextResponse.json(
-        { error: "Approve the X draft before publishing it." },
-        { status: 400 }
-      );
-    }
+    const results: PublishResult[] = [
+      await publishLinkedIn(
+        linkedinText,
+        imageDataUrl
+          ? {
+              dataUrl: imageDataUrl,
+              altText: imageAltText,
+            }
+          : null
+      ),
+    ];
 
-    const results: PublishResult[] = [];
-
-    // Publish sequentially so a partial success can be retried safely
-    // without duplicating the platform that already succeeded.
-    if (target === "linkedin" || target === "both") {
-      results.push(
-        await publishLinkedIn(
-          linkedinText,
-          imageDataUrl
-            ? {
-                dataUrl: imageDataUrl,
-                altText: imageAltText,
-              }
-            : null
-        )
-      );
-    }
-
-    if (target === "x" || target === "both") {
-      results.push(await publishX(xText));
-    }
-
-    const succeeded = results.filter((item) => item.success);
     const failed = results.filter((item) => !item.success);
-
-    const linkedInResult = results.find(
-      (item) => item.platform === "linkedin" && item.success
-    );
-
-    let warning: string | null = null;
-
-    if (imageDataUrl && target === "x") {
-      warning =
-        "The image is ready, but X image publishing is not connected yet. X was published as text only.";
-    } else if (imageDataUrl && target === "both") {
-      warning = linkedInResult?.imageAttached
-        ? "Image attached to LinkedIn. X was published as text only."
-        : "X was published as text only.";
-    }
 
     return NextResponse.json({
       allSucceeded: failed.length === 0,
-      partialSuccess: succeeded.length > 0 && failed.length > 0,
+      partialSuccess: false,
       results,
-      warning,
+      warning: null,
     });
   } catch (error) {
     console.error(error);
