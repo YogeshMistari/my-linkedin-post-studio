@@ -63,6 +63,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid generation mode." }, { status: 400 });
     }
 
+    if (!["trust-growth", "authority", "engagement", "education"].includes(contentGoal)) {
+      return NextResponse.json({ error: "Invalid content goal." }, { status: 400 });
+    }
+
     const instructions = buildGenerationInstructions({
       mode,
       contentGoal,
