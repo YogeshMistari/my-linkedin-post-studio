@@ -3,6 +3,8 @@ import { getOpenAI } from "@/lib/openai";
 import { buildGenerationInstructions } from "@/lib/prompts";
 import type { GenerationMode } from "@/lib/types";
 
+const DEFAULT_TEXT_MODEL = "gpt-6-luna";
+
 function extractJson(text: string) {
   const cleaned = text
     .trim()
@@ -38,15 +40,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid generation mode." }, { status: 400 });
     }
 
-    const model = process.env.OPENAI_TEXT_MODEL;
-    if (!model) {
-      return NextResponse.json(
-        { error: "OPENAI_TEXT_MODEL is not configured." },
-        { status: 500 }
-      );
-    }
-
+    const model = process.env.OPENAI_TEXT_MODEL || DEFAULT_TEXT_MODEL;
     const client = getOpenAI();
+
     const response = await client.responses.create({
       model,
       instructions: buildGenerationInstructions({
@@ -76,9 +72,12 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error(error);
-    return NextResponse.json(
-      { error: "Generation failed. Check the API configuration and try again." },
-      { status: 500 }
-    );
+
+    const message =
+      error instanceof Error && error.message.includes("OPENAI_API_KEY")
+        ? "OPENAI_API_KEY is not configured. Add it to .env.local and restart the dev server."
+        : "Generation failed. Check your OpenAI API key/billing and try again.";
+
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

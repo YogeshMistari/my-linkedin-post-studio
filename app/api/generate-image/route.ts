@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getOpenAI } from "@/lib/openai";
 
+const DEFAULT_IMAGE_MODEL = "gpt-image-2.5-flare";
+
 export async function POST(request: Request) {
   try {
     const { concept } = await request.json();
@@ -9,15 +11,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Image concept is required." }, { status: 400 });
     }
 
-    const model = process.env.OPENAI_IMAGE_MODEL;
-    if (!model) {
-      return NextResponse.json(
-        { error: "OPENAI_IMAGE_MODEL is not configured." },
-        { status: 500 }
-      );
-    }
-
+    const model = process.env.OPENAI_IMAGE_MODEL || DEFAULT_IMAGE_MODEL;
     const client = getOpenAI();
+
     const result = await client.images.generate({
       model,
       prompt: [
@@ -42,9 +38,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ imageUrl });
   } catch (error) {
     console.error(error);
-    return NextResponse.json(
-      { error: "Image generation failed. Check the image model/API configuration." },
-      { status: 500 }
-    );
+
+    const message =
+      error instanceof Error && error.message.includes("OPENAI_API_KEY")
+        ? "OPENAI_API_KEY is not configured. Add it to .env.local and restart the dev server."
+        : "Image generation failed. Check your OpenAI API key/billing and try again.";
+
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

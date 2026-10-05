@@ -32,7 +32,6 @@ A personal content copilot for generating, reviewing and approving platform-nati
 - OpenAI Responses API
 - OpenAI Image API
 - Plain CSS for V1
-- LinkedIn API and X API integrations come after the local V1 flow is validated
 
 ## Run locally
 
@@ -48,15 +47,25 @@ Then open http://localhost:3000.
 
 ## Environment
 
-Edit `.env.local`:
+Only the API key is required:
 
 ```env
 OPENAI_API_KEY=your_api_key
-OPENAI_TEXT_MODEL=gpt-6-luna
-OPENAI_IMAGE_MODEL=gpt-image-2.5-flare
 ```
 
-Model names remain environment variables so the code is easy to update as API model availability changes.
+Optional overrides:
+
+```env
+OPENAI_TEXT_MODEL=
+OPENAI_IMAGE_MODEL=
+```
+
+If you leave those blank, the app currently defaults to:
+
+- `gpt-6-luna` for post generation
+- `gpt-image-2.5-flare` for images
+
+After changing `.env.local`, stop the dev server and run `npm run dev` again.
 
 ## Personalization safety
 
