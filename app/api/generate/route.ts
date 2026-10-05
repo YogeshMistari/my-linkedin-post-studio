@@ -3,6 +3,7 @@ import { getOpenAI } from "@/lib/openai";
 import { generateWithOllama } from "@/lib/ollama";
 import { buildGenerationInstructions } from "@/lib/prompts";
 import { contentPlaybook } from "@/lib/content-playbook";
+import { formatSocialText } from "@/lib/social-format";
 import type { ContentGoal, GenerationMode } from "@/lib/types";
 
 const DEFAULT_OPENAI_TEXT_MODEL = "gpt-6-luna";
@@ -14,24 +15,6 @@ function extractJson(text: string) {
     .replace(/```$/i, "");
 
   return JSON.parse(cleaned);
-}
-
-function sanitizeSocialText(text: string, platform: "linkedin" | "x") {
-  let result = text
-    .replace(/\r\n/g, "\n")
-    .replace(/__/g, "")
-    .replace(/\x60/g, "")
-    .replace(/^#{1,6}\s+/gm, "")
-    .replace(/^\s*-\s+/gm, "• ")
-    .replace(/\n{3,}/g, "\n\n");
-
-  if (platform === "linkedin") {
-    result = result.replace(/\*{2,}/g, "*");
-  } else {
-    result = result.replace(/\*+/g, "");
-  }
-
-  return result.trim();
 }
 
 function ensureRequiredHashtags(text: string) {
@@ -129,11 +112,11 @@ export async function POST(request: Request) {
 
     const parsed = extractJson(raw);
 
-    const linkedinRaw = sanitizeSocialText(
+    const linkedinRaw = formatSocialText(
       String(parsed.linkedin ?? ""),
       "linkedin"
     );
-    const xRaw = sanitizeSocialText(String(parsed.x ?? ""), "x");
+    const xRaw = formatSocialText(String(parsed.x ?? ""), "x");
 
     const linkedin = linkedinRaw ? ensureRequiredHashtags(linkedinRaw) : "";
     const x = xRaw ? ensureRequiredHashtags(xRaw) : "";
