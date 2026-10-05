@@ -121,9 +121,11 @@ ${creatorProfile.voice.avoid.map((item) => `- Avoid: ${item}`).join("\n")}
 - Do not use em dashes.
 - Do not force a CTA or engagement question.
 - Never invent a personal story, metric, employer, client, credential or result.
-- For LinkedIn only, use exactly one asterisk on each side when you want to emphasize a short phrase, for example *SQL Deep Dive:* or *can do*.
-- Do not use **double**, ***triple***, or longer asterisk runs.
-- Keep emphasis limited to a few short labels or phrases, not whole paragraphs.
+- For LinkedIn only, you may use *single-asterisk markers* around a few short labels or key phrases, for example *SQL Deep Dive:* or *can do*.
+- These asterisks are INTERNAL markers only. The backend converts them to Unicode bold before the draft reaches the UI or LinkedIn, so the user must never see raw asterisks in the final LinkedIn draft.
+- Never use double, triple, or longer asterisk runs.
+- Keep emphasis limited to a few short labels or key phrases, not whole paragraphs.
+- Never use an asterisk as a LinkedIn list bullet. Use • instead.
 - Do not use underscores, backticks, or Markdown headings.
 - For X, use plain text without asterisk formatting.
 - If you need a list, prefer clean bullets like • or simple numbering.
