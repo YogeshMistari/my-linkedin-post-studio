@@ -48,7 +48,7 @@ fi
 
 say "3/7 Installing Draw Things CLI"
 if ! command -v draw-things-cli >/dev/null 2>&1; then
-  brew install draw-things-cli
+  brew install draw-things-cli || brew install drawthingsai/draw-things/draw-things-cli
 else
   echo "Draw Things CLI already installed."
 fi
@@ -96,6 +96,6 @@ echo
 echo "Next:"
 echo "  1. Edit config/creator.config.ts to personalize the creator."
 echo "  2. Add social publishing credentials to .env.local if needed."
-echo "  3. Run: npm run dev"
+echo "  3. Run: npm run dev:all"
 echo "  4. Open: http://localhost:3000"
 echo "=============================================================="
