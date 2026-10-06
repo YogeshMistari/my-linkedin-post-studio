@@ -25,9 +25,13 @@ const DEFAULT_OLLAMA_MODEL = "gemma3:4b";
 export async function generateWithOllama({
   system,
   user,
+  format = SOCIAL_DRAFT_SCHEMA,
+  temperature = 0.45,
 }: {
   system: string;
   user: string;
+  format?: object | "json";
+  temperature?: number;
 }) {
   const baseUrl = (process.env.OLLAMA_BASE_URL || DEFAULT_OLLAMA_URL).replace(/\/$/, "");
   const model = process.env.OLLAMA_MODEL || DEFAULT_OLLAMA_MODEL;
@@ -40,13 +44,13 @@ export async function generateWithOllama({
       body: JSON.stringify({
         model,
         stream: false,
-        format: SOCIAL_DRAFT_SCHEMA,
+        format,
         messages: [
           { role: "system", content: system },
           { role: "user", content: user },
         ],
         options: {
-          temperature: 0.45,
+          temperature,
           top_p: 0.9,
         },
       }),
