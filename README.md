@@ -368,15 +368,31 @@ These hashtags are enforced by the generation backend so they are not dependent 
 
 ---
 
-## 12. Change the Topic Library
+## 12. Dynamic Topic Library
 
-The left sidebar is generated from:
+The left sidebar is AI-generated and refreshed automatically.
+
+It refreshes:
+
+- when Post Studio opens
+- whenever you click **New Post**
+- whenever you click **Refresh Ideas**
+
+Each refresh uses the creator's audience, expertise, recurring themes, viewpoints and hook patterns from:
 
 ```text
 config/creator.config.ts
 ```
 
-Example topic:
+The `topicLibrary` inside that config is the **fallback/seed library**. It keeps the app useful if Ollama is unavailable and also gives the system examples of the creator's content territory.
+
+Dynamic topic generation is implemented in:
+
+```text
+app/api/topics/route.ts
+```
+
+Example fallback topic:
 
 ```ts
 {
@@ -391,13 +407,15 @@ Example topic:
 }
 ```
 
-Each topic can contain:
+Each generated topic contains:
 
-- a category
-- a main topic
-- multiple optional angles/sub-text ideas
+- a short category
+- a fresh main topic
+- exactly 3 optional angles/sub-text ideas
 
-Users can click an idea, then edit the topic or notes before generating.
+The system is instructed not to merely rename the fallback topics. It mixes technical, career, interview, practical engineering, opinion and mentor-style ideas.
+
+Users can click an idea, edit the topic, choose/edit an angle, refresh all ideas again, or ignore the suggestions and type their own topic.
 
 ---
 
@@ -670,6 +688,7 @@ app/
   layout.tsx                     metadata + favicon
   api/
     generate/route.ts            text-generation API
+    topics/route.ts              fresh AI topic suggestions
     generate-image/route.ts      image-generation API
     publish/route.ts             LinkedIn publish endpoint
 
