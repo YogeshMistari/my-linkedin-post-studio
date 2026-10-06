@@ -13,6 +13,7 @@ export const creatorConfig = {
     brandInitial: "DWA",
     tagline: "Create authentic content. Build trust. Grow professionally.",
     logoPath: "/brand/data-with-anurag-logo.png",
+    faviconPath: "/brand/data-with-anurag-logo.png",
     logoAlt: "Data With Anurag Logo",
     initiativeBy: "Anurag Srivastava",
     initiativeRole: "Founder, Data With Anurag",
