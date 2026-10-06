@@ -893,6 +893,47 @@ button:disabled { cursor: not-allowed; }
   font-size: 13px;
 }
 
+.topic-sidebar-title {
+  min-width: 0;
+  flex: 1;
+}
+
+.topic-refresh {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex: 0 0 auto;
+  padding: 7px 8px;
+  border: 1px solid var(--yellow-border);
+  border-radius: 9px;
+  background: var(--yellow-soft);
+  color: var(--yellow);
+  font-size: 9px;
+  font-weight: 800;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.topic-refresh:hover:not(:disabled) {
+  border-color: var(--yellow);
+  background: rgba(246, 201, 21, .14);
+}
+
+.topic-refresh:disabled {
+  opacity: .6;
+  cursor: wait;
+}
+
+.spin {
+  animation: topic-spin .8s linear infinite;
+}
+
+@keyframes topic-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .topic-search {
   display: flex;
   align-items: center;
