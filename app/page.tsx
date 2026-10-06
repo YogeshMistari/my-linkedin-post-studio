@@ -2,6 +2,7 @@
 
 import {
   ChangeEvent,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -43,6 +44,21 @@ const quickFeedback = [
   "More save/share worthy",
 ];
 
+type SuggestedTopic = {
+  id: string;
+  category: string;
+  topic: string;
+  angles: string[];
+};
+
+const fallbackTopicLibrary: SuggestedTopic[] =
+  creatorConfig.contentStrategy.topicLibrary.map((item) => ({
+    id: item.id,
+    category: item.category,
+    topic: item.topic,
+    angles: [...item.angles],
+  }));
+
 const contentGoals: Array<{
   id: ContentGoal;
   label: string;
@@ -61,6 +77,9 @@ export default function Home() {
   const [contentGoal, setContentGoal] = useState<ContentGoal>("trust-growth");
   const [selectedTopicId, setSelectedTopicId] = useState("");
   const [topicFilter, setTopicFilter] = useState("");
+  const [topicLibrary, setTopicLibrary] =
+    useState<SuggestedTopic[]>(fallbackTopicLibrary);
+  const [topicsLoading, setTopicsLoading] = useState(false);
   const [content, setContent] = useState<GeneratedContent>(emptyContent);
   const [approval, setApproval] = useState<ApprovalState>({ linkedin: false, x: false });
   const [loadingMode, setLoadingMode] = useState<GenerationMode | null>(null);
@@ -83,7 +102,6 @@ export default function Home() {
   const uploadRef = useRef<HTMLInputElement>(null);
   const draftsRef = useRef<HTMLElement | null>(null);
 
-  const topicLibrary = creatorConfig.contentStrategy.topicLibrary;
   const selectedTopic = useMemo(
     () => topicLibrary.find((item) => item.id === selectedTopicId),
     [selectedTopicId, topicLibrary]
@@ -107,6 +125,36 @@ export default function Home() {
     () => approval.linkedin && approval.x && hasDrafts,
     [approval, hasDrafts]
   );
+
+  async function refreshTopicLibrary() {
+    setTopicsLoading(true);
+
+    try {
+      const response = await fetch("/api/topics", {
+        method: "GET",
+        cache: "no-store",
+        headers: { "Cache-Control": "no-cache" },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !Array.isArray(data.topics) || !data.topics.length) {
+        throw new Error(data.error || "Could not refresh topic ideas.");
+      }
+
+      setTopicLibrary(data.topics);
+      setSelectedTopicId("");
+      setTopicFilter("");
+    } catch (err) {
+      console.warn("Using fallback topic library:", err);
+    } finally {
+      setTopicsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    void refreshTopicLibrary();
+  }, []);
 
   async function generate(mode: GenerationMode = "both", presetFeedback = "") {
     setLoadingMode(mode);
@@ -271,6 +319,7 @@ export default function Home() {
     setContextOpen(false);
     setPublishMessage("");
     setError("");
+    void refreshTopicLibrary();
 
     window.setTimeout(() => {
       document.getElementById("topic")?.focus();
@@ -544,10 +593,20 @@ export default function Home() {
         <aside className="card topic-sidebar">
           <div className="topic-sidebar-head">
             <div className="section-icon compact"><Lightbulb size={16} /></div>
-            <div>
+            <div className="topic-sidebar-title">
               <span className="section-label">Topic Library</span>
-              <strong>Start from an idea</strong>
+              <strong>{topicsLoading ? "Creating fresh ideas…" : "Fresh ideas for you"}</strong>
             </div>
+            <button
+              className="topic-refresh"
+              onClick={() => void refreshTopicLibrary()}
+              disabled={topicsLoading}
+              type="button"
+              title="Generate a completely fresh set of topic ideas"
+            >
+              <RefreshCw size={14} className={topicsLoading ? "spin" : ""} />
+              {topicsLoading ? "Refreshing" : "Refresh Ideas"}
+            </button>
           </div>
 
           <div className="topic-search">
@@ -574,7 +633,8 @@ export default function Home() {
           </div>
 
           <p className="topic-sidebar-help">
-            Pick one or type your own topic. Everything stays editable.
+            Ideas refresh when the app opens and whenever you start a New Post.
+            Pick one, refresh again, or type your own. Everything stays editable.
           </p>
         </aside>
 
