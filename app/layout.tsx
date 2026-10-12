@@ -3,9 +3,9 @@ import { creatorConfig } from "@/config/creator.config";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Post Studio by Data With Anurag",
+  title: "Yogesh Post Studio",
   description:
-    "A LinkedIn and X creator studio by Anurag Srivastava, Founder of Data With Anurag.",
+    "A LinkedIn content studio by Yogesh Mistari, focused on Oracle SQL, PL/SQL, application support and Google Cloud learning.",
   icons: {
     icon: creatorConfig.app.faviconPath,
     shortcut: creatorConfig.app.faviconPath,

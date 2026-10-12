@@ -1,269 +1,331 @@
-# Post Studio — LinkedIn + X Creator Growth Copilot
+# Yogesh Post Studio — LinkedIn Creator Studio
 
-Post Studio turns a creator's real expertise into platform-native LinkedIn and X content, optional AI-generated visuals, an approval workflow, direct LinkedIn publishing, and a free X web-composer flow.
+Yogesh Post Studio helps me turn my professional expertise and learning journey into engaging, professional LinkedIn posts. It is intended to support AI-assisted post generation, optional visuals, an approval workflow, and LinkedIn publishing when valid API credentials are configured.
 
-The default project is branded for **Data With Anurag** and optimized around:
+This project is personalized for Yogesh Mistari, focusing on:
 
-```text
-Authority → Trust → Authenticity → Relevant Follower Growth
-```
+Oracle SQL and PL/SQL development
+Database troubleshooting and performance tuning
+Application and production support
+SQL interview preparation
+Google Cloud learning and practical progress
 
-The app is designed so another creator can fork the repository, replace one creator-config file and brand assets, then use the same workflow.
+My content philosophy:
+
+Practical Learning → Useful Insights → Professional Credibility → Career Growth
+
+The application uses a configurable creator profile so its identity, expertise, writing style, topics, and hashtags can be maintained in one central configuration file.
 
 ---
 
 ## 1. What this app does
 
-- Generate independent LinkedIn and X drafts from one topic.
-- Use a creator-specific knowledge/config layer.
-- Suggest reusable topic ideas and optional content angles.
-- Apply platform-specific formatting.
-- Keep mandatory brand hashtags.
-- Generate a local social-media image with Draw Things.
-- Review, edit and approve drafts before anything is published.
-- Publish LinkedIn directly through the LinkedIn API.
-- Attach the selected/generated image to LinkedIn.
-- Open X with approved text prefilled using the free web composer.
-- Start the whole local app with one command after setup.
+Generate professional LinkedIn post drafts from a topic.
+Use a creator-specific profile and professional knowledge configuration.
+Suggest relevant topics and optional content angles.
+Format content for LinkedIn readability.
+Apply the configured professional hashtags.
+Generate optional social-media visuals when image-generation tools are configured.
+Review, edit and approve drafts before publishing.
+Publish approved posts directly through the LinkedIn API when valid credentials are configured.
+Attach a selected or generated image to a LinkedIn post when supported by the publishing workflow.
+Start the local application for content creation and review.
 
 ---
 
-## 2. Default technology stack
+## 2. Technology Stack
 
-| Capability | Default |
-| --- | --- |
-| Web app | Next.js 15 + React 19 + TypeScript |
-| Text AI | Ollama |
-| Default text model | `gemma3:4b` |
-| Image AI | Draw Things CLI |
-| Default image model | `flux_2_klein_4b_q8p.ckpt` |
-| LinkedIn publishing | LinkedIn API |
-| X publishing | Free X web composer |
-| Styling | Custom CSS |
-| Icons | Lucide React |
+| Capability           | Technology      |
+| -------------------- | --------------- |
+| Web application      | Next.js 15      |
+| UI library           | React 19        |
+| Programming language | TypeScript      |
+| Styling              | Custom CSS      |
+| Icons                | Lucide React    |
+| AI text generation   | Ollama          |
+| Default text model   | `gemma3:4b`     |
+| Image generation     | Draw Things CLI |
+| Social publishing    | LinkedIn API    |
 
-The default text and image generation workflow runs locally and does not require a paid AI API.
+The application combines AI-assisted LinkedIn content generation, draft editing, approval workflows, and optional image generation.
+
+**Important:** Actual capabilities depend on the project's implementation and configuration. Direct LinkedIn publishing requires valid API credentials and permissions. Local AI and image-generation tools may require additional operating-system-specific setup.
+
 
 ---
 
 ## 3. Prerequisites
 
-The included one-step local installer currently targets **macOS** because the default Draw Things image workflow is macOS-first.
+Yogesh Post Studio is intended to be developed and run locally on Windows 11.
 
-You need:
+### Required Software
 
-- macOS
-- Git
-- Homebrew
-- internet access for the initial package/model downloads
-- enough free disk space for local models
-- Apple Silicon is strongly recommended for local image generation
+* Windows 11
+* Visual Studio Code
+* Node.js (LTS version)
+* npm (included with Node.js)
+* Git (optional if you download the repository as a ZIP file)
 
-Node.js, Ollama and Draw Things CLI are checked/installed by the included setup script.
+### Verify Your Installation
 
-If Homebrew is not installed, install it first from:
-
-```text
-https://brew.sh
-```
-
-Verify Git and Homebrew:
+Open the VS Code terminal using **Terminal → New Terminal** and run:
 
 ```bash
+node --version
+npm --version
 git --version
-brew --version
 ```
+
+Git is required only if you plan to clone the repository using Git.
+
+### AI and Image Generation
+
+The project uses Ollama for local AI text generation and Draw Things CLI for image generation.
+
+**Important:** The original setup script is macOS-oriented. Do not run `bash scripts/setup-local-ai.sh` on Windows until its compatibility has been verified.
+
+Additional Windows-compatible setup may be required for AI models and image generation.
+
 
 ---
 
-## 4. Clone the repository
+## 4. Clone the Repository
+
+The source code for **Yogesh Post Studio** is maintained in my GitHub repository.
+
+**GitHub Repository:**
+https://github.com/YogeshMistari/my-linkedin-post-studio
+
+### Clone Using Git
+
+Open the VS Code terminal (`Ctrl + ``) or Windows Terminal and run:
 
 ```bash
-git clone https://github.com/anuanurag2410/linkedin-x-post.git
-cd linkedin-x-post
+git clone https://github.com/YogeshMistari/my-linkedin-post-studio.git
 ```
 
-If you fork the repository first, clone your fork instead.
+Navigate to the project directory:
+
+```bash
+cd my-linkedin-post-studio
+```
+
+Open the project in Visual Studio Code:
+
+```bash
+code .
+```
+
+### Download Without Git
+
+1. Open the [GitHub repository](https://github.com/YogeshMistari/my-linkedin-post-studio).
+2. Click **Code**.
+3. Select **Download ZIP**.
+4. Extract the downloaded ZIP file.
+5. Open the extracted project folder in VS Code.
 
 ---
 
-## 5. Add your logo and favicon
+## 5. Add Your Logo and Favicon
 
-Brand assets are stored in GitHub under:
+Brand assets for **Yogesh Post Studio** are stored in:
 
 ```text
 public/brand/
 ```
 
-For the default Data With Anurag setup, upload the logo as:
+### Logo File
+
+Use your logo file:
 
 ```text
-public/brand/data-with-anurag-logo.png
+public/brand/yogesh-post-studio-logo.png
 ```
 
-The app currently uses this single file for:
+The logo can be used for:
 
-- the header logo
-- browser favicon
-- shortcut/bookmark icon
-- Apple touch icon
+* Application header
+* Browser favicon
+* Bookmark icon
+* Apple touch icon
 
-Recommended asset:
+### Recommended Logo Specifications
 
 ```text
 Format: PNG
-Canvas: square
-Recommended size: 512 x 512 px
-Background: transparent if possible
+Canvas: Square
+Recommended size: 512 × 512 pixels
+Background: Transparent, if possible
 ```
 
-### Upload through GitHub
+Use a professional design that reflects your personal brand and your interests in Oracle SQL, PL/SQL, application support, and Google Cloud learning.
 
-1. Open the repository on GitHub.
-2. Open `public/brand/`.
+**Important:** Adding a logo to this README does not automatically configure the application. The application configuration must reference the correct filename.
+
+### Upload Through GitHub
+
+1. Open the [Yogesh Post Studio repository](https://github.com/YogeshMistari/my-linkedin-post-studio).
+2. Navigate to `public/brand/`.
 3. Click **Add file → Upload files**.
-4. Upload your logo using the exact filename:
-   `data-with-anurag-logo.png`
-5. Commit the file.
+4. Upload your logo as `yogesh-post-studio-logo.png`.
+5. Commit the changes if the logo is not already in the repository.
 
-### Or add it locally
+If you have already uploaded the logo, you do not need to upload it again.
 
-```bash
-cp /path/to/your/logo.png public/brand/data-with-anurag-logo.png
-git add public/brand/data-with-anurag-logo.png
-git commit -m "Add brand logo"
-git push
-```
+### Configure a Separate Favicon Later
 
-Brand-file guidance is also documented in:
-
-```text
-public/brand/README.md
-```
-
-### Use a separate favicon later
-
-Edit:
+If you want a separate favicon, edit:
 
 ```text
 config/creator.config.ts
 ```
 
-Example:
+For example:
 
 ```ts
 app: {
-  logoPath: "/brand/my-brand-logo.png",
-  faviconPath: "/brand/my-brand-icon.png",
+  logoPath: "/brand/yogesh-post-studio-logo.png",
+  faviconPath: "/brand/yogesh-post-studio-icon.png",
 }
 ```
 
-Store both files inside `public/brand/`.
+Place both image files inside `public/brand/`. Make sure the favicon file exists before referencing it.
 
 ---
 
-## 6. One-time installation
+## 6. Local AI Setup (Windows 11)
 
-From the repository root, run:
+Yogesh Post Studio uses Ollama for local AI text generation, depending on the project's configuration.
 
-```bash
-bash scripts/setup-local-ai.sh
+### Prerequisites
+
+* Install Node.js LTS and npm.
+* Install Ollama for Windows if you want to use local AI generation.
+* Download a compatible model, such as `gemma3:4b`, if supported by your system.
+
+### Verify Your Installation
+
+Open PowerShell or the VS Code terminal and run:
+
+```powershell
+node --version
+npm --version
+ollama --version
 ```
 
-The script will:
+If you plan to use Ollama, verify that the Ollama service is running and that your selected model is available.
 
-1. check macOS/Homebrew
-2. check/install Node.js 22+
-3. install Ollama
-4. install Draw Things CLI
-5. run `npm install`
-6. create `.env.local` from `.env.example` if needed
-7. start Ollama
-8. download `gemma3:4b`
-9. download the Draw Things image model
+To list locally available models, run:
 
-This model download can take time the first time.
-
-You can verify the local AI setup with:
-
-```bash
-npm run ai:check
+```powershell
+ollama list
 ```
+
+### Important
+
+The existing `scripts/setup-local-ai.sh` script may be intended for macOS/Linux environments. Do not run it on Windows unless you have verified its compatibility.
+
+Before configuring Ollama or image generation, check the project's environment variables, dependencies, and scripts. Setup requirements may vary depending on the actual implementation.
 
 ---
 
-## 7. Daily startup — one command
 
-After the one-time setup, use only:
+## 7. Daily Startup
 
-```bash
-npm run dev:all
+After completing the required setup, start the development server from the project directory.
+
+### Start the Next.js Application
+
+Open the VS Code terminal and run:
+
+```powershell
+npm.cmd run dev
 ```
 
-This command:
+Open the application in your browser:
 
-- checks whether Ollama is running
-- starts Ollama automatically if required
-- checks whether the configured model exists
-- downloads it if missing
-- verifies Draw Things availability
-- starts the Next.js app
-
-Open:
-
-```text
 http://localhost:3000
-```
 
-Press:
+To stop the development server, press:
 
 ```text
 Ctrl + C
 ```
 
-to stop the development session.
+### Start the Full Local AI Environment
 
-If Post Studio started Ollama itself, the launcher also stops that Ollama process when the session ends.
+The project also defines a `dev:all` command:
+
+```bash
+npm run dev:all
+```
+
+This command invokes `scripts/dev-all.sh`. Its compatibility with Windows depends on your Bash environment and the script's implementation.
+
+**Windows 11 note:** Verify the script requirements before relying on `dev:all` for automatic Ollama startup, model downloads, or image-generation checks. Use a compatible Bash environment if required.
+
 
 ---
 
-## 8. Environment configuration
+## 8. Environment Configuration
 
-The first setup creates:
+The project uses environment variables to configure text generation, image generation, and social publishing.
 
-```text
-.env.local
-```
-
-from:
+The example configuration is stored in:
 
 ```text
 .env.example
 ```
 
-Never commit `.env.local`.
+Create a local environment file named `.env.local` in the project root and use `.env.example` as your reference.
 
-Default local configuration:
+**Never commit `.env.local` or expose access tokens, API keys, or other secrets.**
+
+### Text Generation
 
 ```env
 AI_PROVIDER=ollama
 OLLAMA_BASE_URL=http://127.0.0.1:11434
 OLLAMA_MODEL=gemma3:4b
 
+# Optional OpenAI text fallback
+OPENAI_API_KEY=
+OPENAI_TEXT_MODEL=
+```
+
+### Image Generation
+
+```env
 IMAGE_PROVIDER=drawthings
 DRAWTHINGS_BIN=draw-things-cli
 DRAWTHINGS_MODEL=flux_2_klein_4b_q8p.ckpt
 DRAWTHINGS_STEPS=4
 
+# Optional OpenAI image fallback
+OPENAI_IMAGE_MODEL=
+```
+
+Image generation requirements depend on the configured provider and the tools available on your computer.
+
+### LinkedIn Publishing
+
+```env
 LINKEDIN_ACCESS_TOKEN=
 LINKEDIN_VERSION=202609
 ```
 
-X does not require an API token because the app currently uses the free X web composer.
+LinkedIn direct publishing is optional. A valid access token with the required permissions is needed to publish through the API.
+
+### X Publishing
+
+The application uses the X web composer flow. According to the current project configuration, X API credentials and API billing are not required for this workflow.
+
+**Important:** Keep `.env.example` free of real credentials. Add your actual local configuration only to `.env.local`, and verify that `.env.local` is excluded from Git.
 
 ---
 
-## 9. Personalize the app for another creator
+
+## 9. Personalize the App for Another Creator
 
 The main personalization file is:
 
@@ -271,31 +333,23 @@ The main personalization file is:
 config/creator.config.ts
 ```
 
-For normal customization, edit this file instead of rewriting the prompt engine.
+For normal customization, update this file instead of rewriting the prompt engine.
 
-It contains:
+It contains settings for:
 
-- app name and tagline
-- brand logo/favicon paths
-- creator name
-- positioning
-- target audience
-- expertise
-- credentials
-- approved professional experiences
-- creator brand identity
-- writing voice
-- phrases to avoid
-- required hashtags
-- topic library
-- recurring themes
-- professional viewpoints
-- hook styles
-- LinkedIn formatting rules
-- X formatting rules
-- growth strategy
+* Application name and tagline
+* Logo and favicon paths
+* Creator name and professional positioning
+* Target audience and areas of expertise
+* Approved professional experiences
+* Writing voice and phrases to avoid
+* Required hashtags
+* Topic library and recurring themes
+* Professional viewpoints and hook styles
+* LinkedIn and X formatting rules
+* Content growth strategy
 
-### Change the creator identity
+### Change the Creator Identity
 
 Example:
 
@@ -304,42 +358,47 @@ creator: {
   name: "Your Name",
   positioning: {
     primaryIdentity: "Your professional positioning",
-    experience: "Your experience",
+    experience: "Your professional experience",
     currentAngle: "How you want your content positioned",
   },
 }
 ```
 
-Only include facts you are comfortable using publicly.
+Adapt the example to the actual structure of `config/creator.config.ts`; property names must match the existing configuration.
 
-Do not put secrets, passwords, confidential client information or private account details here.
+Only include facts you are comfortable sharing publicly.
+
+Never add passwords, access tokens, confidential client information, or private account details to this file.
 
 ---
 
-## 10. Change the brand
 
-Inside:
+## 10. Change the Brand
+
+The application branding is configured in:
 
 ```text
 config/creator.config.ts
 ```
 
-edit:
+The current brand settings for Yogesh Post Studio include:
 
 ```ts
 app: {
-  name: "Post Studio",
-  brandInitial: "DWA",
-  tagline: "Create authentic content. Build trust. Grow professionally.",
-  logoPath: "/brand/data-with-anurag-logo.png",
-  faviconPath: "/brand/data-with-anurag-logo.png",
-  logoAlt: "Data With Anurag Logo",
-  initiativeBy: "Anurag Srivastava",
-  initiativeRole: "Founder, Data With Anurag",
+  name: "Yogesh Post Studio",
+  brandInitial: "YM",
+  tagline: "Create professional content. Share your learning. Grow your career.",
+  logoPath: "/brand/yogesh-post-studio-logo.png",
+  faviconPath: "/brand/yogesh-post-studio-logo.png",
+  logoAlt: "Yogesh Mistari Logo",
+  initiativeBy: "Yogesh Mistari",
+  initiativeRole: "Oracle SQL & PL/SQL Developer",
 }
 ```
 
-The current UI theme is black + yellow and can be changed in:
+**Important:** This is a reference example. Keep the property names and structure consistent with the actual `config/creator.config.ts` file.
+
+The application theme can be customized in:
 
 ```text
 app/globals.css
@@ -347,89 +406,100 @@ app/globals.css
 
 ---
 
-## 11. Change the mandatory hashtags
 
-Inside:
+## 11. Configure Required Hashtags
 
-```text
+Required hashtags are configured in:
+
+```text id="8p4dmr"
 config/creator.config.ts
 ```
 
-edit:
+If the project supports mandatory hashtags, configure them to match your professional content and target audience.
 
-```ts
+Example hashtags for Yogesh Post Studio:
+
+```ts id="d7v2g3"
 requiredHashtags: [
-  "#DataXMentor",
-  "#DataWithAnurag",
-],
+  "#OracleSQL",
+  "#PLSQL",
+  "#ApplicationSupport",
+  "#GoogleCloud",
+]
 ```
 
-These hashtags are enforced by the generation backend so they are not dependent only on the local model remembering them.
+**Important:** This is an example, not a verified copy of your current configuration. Keep the existing property name and structure used by the application.
+
+Choose relevant hashtags for each post rather than adding every hashtag to every post. Avoid unrelated or excessive hashtags.
 
 ---
 
+
 ## 12. Dynamic Topic Library
 
-The left sidebar is AI-generated and refreshed automatically.
+Yogesh Post Studio provides topic suggestions to help create relevant professional content.
 
-It refreshes:
+The topic library can include subjects such as:
 
-- when Post Studio opens
-- whenever you click **New Post**
-- whenever you click **Refresh Ideas**
+* Oracle SQL and PL/SQL practice
+* SQL query optimization and performance tuning
+* Oracle errors and troubleshooting
+* Application and production support
+* SQL interview preparation
+* Google Cloud learning
+* Career development and learning in public
 
-Each refresh uses the creator's audience, expertise, recurring themes, viewpoints and hook patterns from:
+### Topic Configuration
+
+The main creator configuration file is:
 
 ```text
 config/creator.config.ts
 ```
 
-The `topicLibrary` inside that config is the **fallback/seed library**. It keeps the app useful if Ollama is unavailable and also gives the system examples of the creator's content territory.
+The topic library defined there can provide initial suggestions and fallback content, depending on the application's implementation.
 
-Dynamic topic generation is implemented in:
+Topic-generation logic is located in:
 
 ```text
 app/api/topics/route.ts
 ```
 
-Example fallback topic:
+The application interface may allow you to select a suggested topic, edit it, refresh suggestions, or enter your own idea.
+
+### Example Topic
 
 ```ts
 {
-  id: "spark-performance",
-  category: "Spark",
-  topic: "More compute is not the first answer to every slow Spark job",
+  id: "oracle-sql-performance",
+  category: "Performance Tuning",
+  topic: "How to investigate a slow Oracle SQL query",
   angles: [
-    "Talk about skew, shuffles and joins before scaling compute.",
-    "Use a simple troubleshooting sequence.",
-    "Frame it as a common performance mistake."
+    "Check the execution plan before changing the query.",
+    "Investigate indexes, joins, and filtering conditions.",
+    "Explain the troubleshooting process with a practical example."
   ],
 }
 ```
 
-Each generated topic contains:
+This example illustrates the topic structure; keep it consistent with the actual implementation in your project.
 
-- a short category
-- a fresh main topic
-- exactly 3 optional angles/sub-text ideas
-
-The system is instructed not to merely rename the fallback topics. It mixes technical, career, interview, practical engineering, opinion and mentor-style ideas.
-
-Users can click an idea, edit the topic, choose/edit an angle, refresh all ideas again, or ignore the suggestions and type their own topic.
+The goal is to turn practical learning and troubleshooting experience into useful, authentic professional content.
 
 ---
 
-## 13. Change the writing voice
 
-Creator voice is configured in:
+## 13. Change the Writing Voice
 
-```text
+The creator's writing voice is configured in:
+
+```text id="voice13"
 config/creator.config.ts
 ```
 
-Important sections:
+Depending on the project configuration, the relevant settings may include:
 
-```text
+```text id="voice14"
 creator.voice.principles
 creator.voice.avoid
 contentStrategy.growthPrinciples
@@ -437,90 +507,97 @@ contentStrategy.viewpoints
 contentStrategy.formatting
 ```
 
-This is the best place to make the output:
+Use these settings to guide the generated content toward a consistent professional style.
 
-- more technical
-- more casual
-- more concise
-- more opinionated
-- more educational
-- more founder-style
-- more mentor-style
+For Yogesh Post Studio, the preferred content style can emphasize:
 
-without rewriting the whole prompt.
+* Clear, practical technical explanations
+* Realistic Oracle SQL and PL/SQL examples
+* Structured troubleshooting and root-cause analysis
+* Concise, professional language
+* Lessons learned through hands-on practice
+* Career insights and Google Cloud learning
+* Authentic experiences without unsupported claims
+
+You can adjust the voice to be more technical, concise, educational, conversational, or opinion-driven.
+
+**Tip:** Update `config/creator.config.ts` first. Modify `lib/prompts.ts` only when you need to change the application's general generation behavior.
+
+The exact configuration property names must match those in your project.
 
 ---
 
-## 14. Where the actual prompt lives
 
-The reusable prompt engine is:
+## 14. Where the Actual Prompt Lives
+
+The reusable prompt engine is located in:
 
 ```text
 lib/prompts.ts
 ```
 
-Most users should personalize `config/creator.config.ts` first.
+For normal personalization, start with:
 
-Only edit `lib/prompts.ts` when you want to change the app-wide generation behavior itself, such as:
+```text
+config/creator.config.ts
+```
 
-- default LinkedIn structure
-- hook rules
-- trust-signal requirements
-- X writing strategy
-- promotional-post rules
-- image-concept rules
-- JSON output contract
+Modify `lib/prompts.ts` only when you want to change general content-generation behavior, such as:
 
-The creator-specific facts should remain in `config/creator.config.ts`.
+* Default LinkedIn post structure
+* Opening hooks and formatting rules
+* Technical explanation requirements
+* X writing strategy
+* Promotional content rules
+* Image concept instructions
+* Expected generation output format
+
+Keep creator-specific facts and preferences in the creator configuration.
 
 ---
 
-## 15. LinkedIn formatting
+## 15. LinkedIn Formatting
 
-Post Studio formats LinkedIn content before it reaches the editor.
+Post Studio includes formatting functionality for social content.
 
-Internal emphasis markers generated by the model are converted into Unicode bold-looking characters so LinkedIn does not receive broken Markdown such as:
-
-```text
-**SQL Deep Dive**
-```
-
-Lists are normalized to clean bullets such as:
-
-```text
-• SQL fundamentals
-• Python fundamentals
-• Spark fundamentals
-```
-
-The formatter is implemented in:
+The formatter is located in:
 
 ```text
 lib/social-format.ts
 ```
 
----
-
-## 16. LinkedIn publishing setup
-
-LinkedIn direct publishing is optional.
-
-Without a LinkedIn token, you can still generate and edit content.
-
-To enable publishing, place a valid member access token in:
-
-```text
-.env.local
-```
+Depending on the implementation, formatting may convert model-generated emphasis into Unicode bold-style characters and normalize lists into readable bullets.
 
 Example:
 
+```text
+SQL Performance Tuning
+
+• Review the execution plan
+• Check indexes and joins
+• Investigate filtering conditions
+```
+
+Review generated content before publishing, because formatting and character rendering may vary across platforms and devices.
+
+---
+
+## 16. LinkedIn Publishing Setup
+
+LinkedIn direct publishing is optional. You can generate and edit content without configuring a publishing token.
+
+### Environment Variables
+
+Configure these values in your local `.env.local` file:
+
 ```env
-LINKEDIN_ACCESS_TOKEN=your_token_here
+LINKEDIN_ACCESS_TOKEN=
 LINKEDIN_VERSION=202609
 ```
 
-The token used by this project needs the permissions required by the current publishing flow, including:
+Use a valid access token with the permissions required by the application's current publishing implementation.
+
+The project configuration documents these permissions:
 
 ```text
 openid
@@ -528,66 +605,60 @@ profile
 w_member_social
 ```
 
-The app resolves the authenticated LinkedIn member through OIDC userinfo and publishes through LinkedIn's Posts API.
+The required permissions and API behavior may change. Verify them against LinkedIn's current documentation and the implementation in your project before publishing.
 
-Important:
+### Security Notes
 
-- never commit the token
-- never put it in `creator.config.ts`
-- rotate the token if it is accidentally exposed
-- LinkedIn access tokens expire, so replace the token in `.env.local` when required
+* Never commit `.env.local`.
+* Never put access tokens in `config/creator.config.ts`.
+* Never share tokens in screenshots or public repositories.
+* Replace expired or revoked credentials when necessary.
+* Review and approve a draft before publishing.
 
-### LinkedIn image publishing
+### Image Publishing
 
-If an image is generated or uploaded in Post Studio, the LinkedIn publishing flow:
+The project may support attaching a generated or uploaded image to a LinkedIn post. Confirm the current implementation in:
 
-1. initializes a LinkedIn image upload
-2. uploads the image
-3. receives the image URN
-4. publishes the LinkedIn post with that image attached
+```text
+lib/publishers.ts
+app/api/publish/route.ts
+```
 
-If no image is selected, the app publishes text only.
+If image publishing is supported, follow the configured upload and publishing workflow. If no image is selected, check whether the current implementation publishes a text-only post.
 
 ---
 
-## 17. X publishing — free mode
+## 17. X Publishing — Web Composer
 
-The project intentionally does not require a paid X API.
+Post Studio supports an X web-composer workflow without requiring the X API for that workflow.
 
-The workflow is:
-
-```text
-Generate X draft
-→ Review
-→ Approve
-→ Open in X
-→ X composer opens with text prefilled
-→ Click Post manually
-```
-
-No X API token, Client ID, developer billing or OAuth setup is required.
-
-The combined action:
+Typical workflow:
 
 ```text
-Publish LinkedIn + Open X
+Generate an X draft
+        ↓
+Review and edit
+        ↓
+Approve the draft
+        ↓
+Open the X composer
+        ↓
+Review the prefilled text
+        ↓
+Publish manually on X
 ```
 
-does the following:
+The combined action may publish the approved LinkedIn post and open the X composer with the approved X text.
 
-1. publishes LinkedIn through the API
-2. opens X with the approved X text prefilled
-3. you make the final X post manually
+**Important:** Opening the X composer is not the same as publishing a post automatically. Complete the final review and publish manually on X.
 
-The free X intent flow does not automatically attach the generated image.
+The web-composer flow may not attach the generated image automatically. Verify the current implementation before relying on image attachment.
 
 ---
 
-## 18. Image generation
+## 18. Image Generation
 
-The default image provider is Draw Things CLI.
-
-Configuration:
+The example environment configuration uses Draw Things CLI:
 
 ```env
 IMAGE_PROVIDER=drawthings
@@ -596,254 +667,270 @@ DRAWTHINGS_MODEL=flux_2_klein_4b_q8p.ckpt
 DRAWTHINGS_STEPS=4
 ```
 
-Draw Things does not need to remain open as a desktop application.
-
-Post Studio runs the CLI only when you click image generation.
-
-Image generation code lives in:
+The relevant project files are:
 
 ```text
 lib/drawthings.ts
 app/api/generate-image/route.ts
 ```
 
-You can also choose **Upload mine** inside the UI and use your own image.
+Image generation depends on the configured provider, installed software, model availability, and operating-system compatibility.
+
+You can also use the **Upload mine** option in the application to select your own image, if that feature is enabled.
+
+Before using image generation on Windows 11, verify that the configured CLI and model are installed and supported by your environment.
 
 ---
 
-## 19. Content workflow
+## 19. Content Creation Workflow
 
-Typical flow:
+A typical Post Studio workflow is:
 
 ```text
-Choose or enter topic
+Choose or enter a topic
         ↓
-Choose/edit optional angle
+Choose or edit the angle
         ↓
-Choose content goal
+Select a content goal
         ↓
-Generate LinkedIn + X
+Generate LinkedIn and X drafts
         ↓
-Review/edit independently
+Review and edit each draft
         ↓
-Generate/upload image
+Generate or upload an image
         ↓
-Approve platform drafts
+Approve the drafts
         ↓
-Post LinkedIn
-and/or
-Open in X
+Publish to LinkedIn and/or open X
 ```
 
-Editing an approved draft removes its approval so you do not accidentally publish changed content without reviewing it again.
+Review every draft before publishing. Editing an approved draft may remove its approval, depending on the current application implementation.
+
+The goal is to create authentic, useful content based on your professional knowledge and learning.
 
 ---
 
-## 20. Useful commands
+## 20. Useful Commands
 
-### First-time local setup
+Run these commands from the project directory in the VS Code terminal.
 
-```bash
-bash scripts/setup-local-ai.sh
+### Install Dependencies
+
+```powershell
+npm.cmd install
 ```
 
-### Start everything
+### Start the Next.js Development Server
+
+```powershell
+npm.cmd run dev
+```
+
+Open:
+
+http://localhost:3000
+
+### Build the Application
+
+```powershell
+npm.cmd run build
+```
+
+### Start the Production Server
+
+```powershell
+npm.cmd run start
+```
+
+### Local AI Setup and Diagnostics
+
+The project defines these additional commands:
 
 ```bash
+npm run setup:local
+npm run ai:check
 npm run dev:all
 ```
 
-### Check AI installation
-
-```bash
-npm run ai:check
-```
-
-### Start only Next.js
-
-```bash
-npm run dev
-```
-
-### Production build
-
-```bash
-npm run build
-```
-
-### Production start
-
-```bash
-npm run start
-```
+These commands invoke Bash scripts. On Windows 11, their compatibility depends on the installed Bash environment and script implementation. Verify the requirements before running them.
 
 ---
 
-## 21. Important project files
+## 21. Important Project Files
+
+The following is a reference to the main files discussed in this README. Verify individual paths against the current repository.
 
 ```text
 app/
-  page.tsx                       main UI
-  globals.css                    black/yellow visual theme
-  layout.tsx                     metadata + favicon
+  page.tsx
+  globals.css
+  layout.tsx
   api/
-    generate/route.ts            text-generation API
-    topics/route.ts              fresh AI topic suggestions
-    generate-image/route.ts      image-generation API
-    publish/route.ts             LinkedIn publish endpoint
+    generate/route.ts
+    topics/route.ts
+    generate-image/route.ts
+    publish/route.ts
 
 config/
-  creator.config.ts              main creator personalization file
+  creator.config.ts
 
 lib/
-  prompts.ts                     reusable writing prompt engine
-  social-format.ts               LinkedIn/X text formatter
-  ollama.ts                      local text-model connection
-  drawthings.ts                  local image generation
-  publishers.ts                  LinkedIn publishing implementation
+  prompts.ts
+  social-format.ts
+  ollama.ts
+  drawthings.ts
+  publishers.ts
 
 public/
   brand/
-    README.md                     brand asset instructions
-    data-with-anurag-logo.png     add this file yourself
+    yogesh-post-studio-logo.png
 
 scripts/
-  setup-local-ai.sh              one-time local setup
-  dev-all.sh                     one-command launcher
-  check-local-ai.sh              installation diagnostics
+  setup-local-ai.sh
+  dev-all.sh
+  check-local-ai.sh
 
-.env.example                     environment variable template
-.env.local                       local secrets; never commit
-REQUIREMENTS.md                  compact requirements reference
+.env.example
+.env.local
+package.json
+README.md
 ```
+
+### File Responsibilities
+
+* `app/page.tsx` — main application interface
+* `app/globals.css` — application styling
+* `app/layout.tsx` — page layout and metadata
+* `config/creator.config.ts` — creator identity, branding, and content preferences
+* `lib/prompts.ts` — reusable generation prompts
+* `lib/social-format.ts` — social content formatting
+* `lib/ollama.ts` — local text-generation integration
+* `lib/drawthings.ts` — image-generation integration
+* `lib/publishers.ts` — publishing functionality
+* `.env.example` — example environment configuration
+* `.env.local` — local configuration and secrets; never commit this file
 
 ---
 
 ## 22. Troubleshooting
 
-### Ollama is not reachable
+### PowerShell Blocks `npm`
 
-Run:
+If PowerShell reports that `npm.ps1` cannot run because script execution is disabled, try using the Windows command wrapper:
 
-```bash
-npm run dev:all
+```powershell
+npm.cmd run dev
 ```
 
-The launcher normally starts Ollama automatically.
+This avoids invoking `npm.ps1` and does not require changing the PowerShell execution policy.
 
-Check:
+### Ollama Is Not Reachable
 
-```bash
-npm run ai:check
-```
+Check that Ollama is installed and running. Then run:
 
-Ollama logs are written to:
-
-```text
-/tmp/post-studio-ollama.log
-```
-
-### Local model returns an incomplete draft
-
-The generation API automatically attempts a recovery pass.
-
-If failures continue:
-
-```bash
+```powershell
+ollama --version
 ollama list
+```
+
+If the project uses Ollama, confirm that the configured model is available.
+
+For example:
+
+```powershell
 ollama pull gemma3:4b
 ```
 
-Then restart:
+Only download the model if it is compatible with your machine and required by your configuration.
 
-```bash
-npm run dev:all
-```
+### Local AI Setup Fails
 
-A larger Ollama model can also improve output consistency if your machine has enough memory.
+The local AI scripts use Bash. Check their dependencies and Windows compatibility before running them. Review the terminal error message and the relevant script to identify the cause.
 
-### Logo does not appear
+### Logo Does Not Appear
 
-Confirm this exact file exists:
+Confirm that this file exists:
 
 ```text
-public/brand/data-with-anurag-logo.png
+public/brand/yogesh-post-studio-logo.png
 ```
 
-Then restart the app and hard-refresh the browser.
+Check that `config/creator.config.ts` references the same filename, and verify the logo settings in the application.
 
-The app header uses a DWA fallback mark when the logo is missing.
+Restart the application and refresh the browser after making configuration changes.
 
-### Favicon does not update immediately
+### Favicon Does Not Update
 
-Browsers cache favicons aggressively.
+Browsers may cache favicons. Check the configured favicon path in `config/creator.config.ts` and the metadata in `app/layout.tsx`. Confirm that the referenced file exists, then refresh the page or reopen the browser tab.
 
-After adding/replacing the logo:
+### LinkedIn Publishing Fails
 
-1. restart Post Studio
-2. hard-refresh the page
-3. close/reopen the tab if needed
-4. clear the site's cached data if the old icon remains
+Check the following:
 
-### LinkedIn publishing fails
+* `LINKEDIN_ACCESS_TOKEN` is configured in `.env.local`.
+* The token is valid and has the required permissions.
+* The configured API version is supported by the implementation.
+* The draft has been approved in the application.
+* The publishing request and response contain no relevant API errors.
 
-Check:
+Never paste an access token into a public issue or repository.
 
-- `LINKEDIN_ACCESS_TOKEN` exists in `.env.local`
-- the token has not expired
-- the token has the necessary publishing permission
-- the post has been approved in the UI
+### X Composer Does Not Open
 
-### X button is disabled
-
-The X draft must:
-
-- be approved
-- fit within 280 characters for the current single-post flow
+Check that the X draft is approved and that the application can open the X composer. If the application enforces a character limit, make sure the post meets the limit for the selected posting format.
 
 ---
 
-## 23. Security rules
+## 23. Security Rules
 
-Never commit:
+Never commit or publish:
 
 ```text
 .env.local
-access tokens
+Access tokens
 API keys
-client secrets
-passwords
-private client information
-confidential project data
+Client secrets
+Passwords
+Confidential client information
+Private account details
 ```
 
-Keep only public-safe creator facts inside:
+Keep only information suitable for public use in:
 
 ```text
 config/creator.config.ts
 ```
 
-If a credential is accidentally shown in a screenshot, terminal recording, commit or chat, rotate it immediately.
+Before committing changes:
+
+1. Review the files being staged.
+2. Confirm that `.env.local` and other secrets are excluded.
+3. Remove confidential information from logs and screenshots.
+4. Rotate any credential that has been accidentally exposed.
 
 ---
 
-## 24. Fork/personalization checklist
+## 24. Fork and Personalization Checklist
 
-For a new creator:
+To adapt Post Studio for another creator:
 
-1. fork the repository
-2. clone the fork
-3. add a logo to `public/brand/`
-4. edit `config/creator.config.ts`
-5. replace creator identity and positioning
-6. replace expertise and approved experiences
-7. replace voice rules and phrases to avoid
-8. replace required hashtags
-9. replace Topic Library ideas
-10. run `bash scripts/setup-local-ai.sh`
-11. add LinkedIn credentials to `.env.local` only if direct publishing is wanted
-12. run `npm run dev:all`
-13. open `http://localhost:3000`
-14. generate, review and approve before publishing
+1. Fork the repository or create your own copy.
+2. Clone or download the project.
+3. Install Node.js LTS and the project dependencies.
+4. Add your brand assets to `public/brand/`.
+5. Update `config/creator.config.ts`.
+6. Customize your creator identity and professional positioning.
+7. Review the writing voice and content preferences.
+8. Configure relevant hashtags and topic suggestions.
+9. Review the `.env.example` file.
+10. Create `.env.local` without committing secrets.
+11. Configure local AI and image generation if required.
+12. Verify any Bash-based setup scripts before running them on Windows.
+13. Start the application using `npm.cmd run dev`.
+14. Open http://localhost:3000.
+15. Generate, review, and approve drafts before publishing.
 
-That is enough to reuse Post Studio for another professional creator without rebuilding the application.
+LinkedIn publishing and local image generation may require additional configuration. X web-composer publishing requires a final manual review and publishing action.
+
+Yogesh Post Studio is intended to help turn practical technical knowledge, hands-on learning, and professional experience into useful content.
+  
